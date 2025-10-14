@@ -1,0 +1,66 @@
+\begin{thebibliography}{10}
+
+\bibitem{ConcatFeature}
+Xi~Chen, Yangsiyi Lu, Yuehai Wang, and Jianyi Yang.
+\newblock Cmbf: Cross-modal-based fusion recommendation algorithm.
+\newblock {\em Sensors}, 21(16), 2021.
+
+\bibitem{AudioCLIP}
+Andrey Guzhov, Federico Raue, J{\"o}rn Hees, and Andreas Dengel.
+\newblock Audioclip: Extending clip to image, text and audio.
+\newblock In {\em ICASSP 2022-2022 IEEE International Conference on Acoustics,
+  Speech and Signal Processing (ICASSP)}, pages 976--980. IEEE, 2022.
+
+\bibitem{ContrastiveLearning}
+Haigen Hu, Xiaoyuan Wang, Yan Zhang, Qi~Chen, and Qiu Guan.
+\newblock A comprehensive survey on contrastive learning.
+\newblock {\em Neurocomputing}, 610:128645, 2024.
+
+\bibitem{Fusion}
+Peishan Li, Weixiao Zhan, Lutao Gao, Shuran Wang, and Linnan Yang.
+\newblock Multimodal recommendation system based on cross self-attention
+  fusion.
+\newblock {\em Systems}, 13(1), 2025.
+
+\bibitem{Lops2011}
+Pasquale Lops, Marco de~Gemmis, and Giovanni Semeraro.
+\newblock {\em Content-based Recommender Systems: State of the Art and Trends},
+  pages 73--105.
+\newblock Springer US, Boston, MA, 2011.
+
+\bibitem{Sparsity}
+Nitin Mishra, Saumya Chaturvedi, Aanchal Vij, and Sunita Tripathi.
+\newblock Research problems in recommender systems.
+\newblock In {\em Journal of Physics: Conference Series}, volume 1717, page
+  012002. IOP publishing, 2021.
+
+\bibitem{CLIP}
+Alec Radford, Jong~Wook Kim, Chris Hallacy, Aditya Ramesh, Gabriel Goh,
+  Sandhini Agarwal, Girish Sastry, Amanda Askell, Pamela Mishkin, Jack Clark,
+  et~al.
+\newblock Learning transferable visual models from natural language
+  supervision.
+\newblock In {\em International conference on machine learning}, pages
+  8748--8763. PmLR, 2021.
+
+\bibitem{ColdStart}
+Yu~Rong, Xiao Wen, and Hong Cheng.
+\newblock A monte carlo algorithm for cold start recommendation.
+\newblock In {\em Proceedings of the 23rd international conference on World
+  wide web}, pages 327--336, 2014.
+
+\bibitem{Spillong}
+Giuseppe Spillo, Elio Musacchio, Cataldo Musto, Marco de~Gemmis, Pasquale Lops,
+  and Giovanni Semeraro.
+\newblock See the movie, hear the song, read the book: Extending movielens-1m,
+  last.fm-2k, and dbbook with multimodal data.
+\newblock In {\em Proceedings of the Nineteenth ACM Conference on Recommender
+  Systems}, RecSys '25, page 847–856, New York, NY, USA, 2025. Association
+  for Computing Machinery.
+
+\bibitem{CLIPRecSys}
+Zixuan Yi, Zijun Long, Iadh Ounis, Craig Macdonald, and Richard Mccreadie.
+\newblock Large multi-modal encoders for recommendation.
+\newblock {\em arXiv preprint arXiv:2310.20343}, 2023.
+
+\end{thebibliography}

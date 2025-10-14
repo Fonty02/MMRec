@@ -1,0 +1,28 @@
+\section{Contrastive Learning arcitetures in Multimodal Recommender Systems}
+CLIP and AudioCLIP were born, and mainly used, for classification tasks. However, their ability to create a shared feature space for different modalities makes them suitable for multimodal recommender systems as well.
+\subsection{CLIP in Multimodal Recommender Systems}
+Zixuan Yi et al. \cite{CLIPRecSys} analyzed the use of CLIP in multimodal recommender systems. Up to few years ago, multimodal features were extracted using pretrained models on a single modality, such as ResNet for images and BERT for text. This leads to a problem: the features extracted from different modalities are not aligned in the same feature space. To solve this problem, they proposed to use CLIP to extract aligned image and text features. In particular, they used both a frozen and a fine-tuned CLIP model to extract image and text features. Experiments involved five multimodal recommender systems: VBPR, MMGCN, MMGCL , SLMRec  and LATTICE and showed that both frozen and fine-tuned CLIP features significantly outperformed the traditional pretrained features in four out of five models. To be more specific, due to it's learning objective, LATTICE perform better without CLIP features. The fine-tune algorithm proposed by the authors is known as \textbf{END-TO-END Training}.
+\paragraph{End-To-End Training}
+The end-to-end fine-tuning procedure integrates the CLIP encoder directly into the recommendation model and jointly optimizes both components using recommendation losses. The training steps are as follows:
+
+\begin{enumerate}
+    \item \textbf{Load Data:} Prepare the dataset by loading raw data
+    
+    \item \textbf{Initialize CLIP Encoder:} Load a pre-trained CLIP model and its corresponding weights.
+    
+    \item \textbf{Generate Embeddings:} Use the CLIP encoder to extract image embeddings and text embeddings from the dataset:
+    
+    \item \textbf{Integrate Embeddings:} Feed the extracted embeddings into the recommendation model as initial item representations.
+    
+    \item \textbf{Joint Optimisation:} For each training epoch, jointly update both the CLIP encoder and the recommendation model:
+    \begin{enumerate}
+        \item Perform a forward pass to compute user--item scores.
+        \item Compute the recommendation loss 
+        \item Backpropagate the loss and update both the CLIP encoder and recommendation model parameters:
+    \end{enumerate}
+    \item \textbf{Evaluation:} After each epoch, evaluate and log recommendation performance metrics (e.g., NDCG, Recall) to monitor progress.
+\end{enumerate}
+
+This end-to-end strategy allows the CLIP encoder to adapt its visual and textual representations specifically to the recommendation task, leading to improved alignment between modalities and better overall recommendation performance.
+\subsection{AudioCLIP in Multimodal Recommender Systems}
+In literature there are evidence of the use of AudioCLIP in multimodal recommender systems.

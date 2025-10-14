@@ -1,0 +1,52 @@
+\documentclass[a4paper,12pt]{article}
+
+% Packages
+\usepackage{fancyhdr}  % For custom headers and footers
+\usepackage{graphicx}  % For including images
+% Packages to improve control over figure placement
+\usepackage{float}       % [H] placement specifier (exact placement)
+\usepackage{placeins}    % \FloatBarrier to prevent floats moving past a barrier
+\usepackage{caption}     % Improved caption control
+\usepackage{subcaption}  % Sub-figures support
+% Optional: absolute positioning on the page
+\usepackage[absolute,overlay]{textpos} % precise placement with \begin{textblock*}{width}(x,y)
+% Optional: wrap text around figures
+\usepackage{wrapfig}
+\usepackage{lipsum}    % For placeholder text
+\usepackage{amsmath}   % For advanced math typesetting
+\usepackage{tabularx}  % For advanced tables
+
+% Logo and Header Configuration
+\pagestyle{fancy}
+\fancyhf{}  % Clear default header and footer
+\fancyhead[R]{\includegraphics[width=3cm]{img/logo.png}}  % Add your logo here
+
+% Margins
+\setlength{\headheight}{52pt}  % Adjust to fit your logo height if needed
+
+% Usage notes:
+% - Use \begin{figure}[H] to place a figure exactly where it appears in the source (requires package 'float').
+% - Use \FloatBarrier (from 'placeins') to prevent previous floats from moving past that point.
+% - For absolute positioning: use the 'textpos' package and \begin{textblock*}{<width>}[<anchor>](<x>,<y>) ... \end{textblock*}.
+%   Coordinates are in units set by \TPHorizModule and \TPVertModule (defaults are 1pt); you can set \setlength{\TPHorizModule}{1mm} etc.
+% - For wrapping text around an image use \begin{wrapfigure}{r}{0.4\textwidth} ... \end{wrapfigure}.
+
+\title{AudioCLIP4Rec}
+\author{Fontana Emanuele}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\include{pages/MMRec}
+\newpage
+\include{pages/AudioClip}
+\newpage
+\include{pages/ClipInRecSys}
+\bibliographystyle{plain}
+\bibliography{biblio.bib}
+
+\end{document}
