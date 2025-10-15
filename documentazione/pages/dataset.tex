@@ -6,38 +6,18 @@ The dataset used in this project is \textbf{MovieLens 1M}, a collection of expli
 
 MovieLens 1M contains:
 \begin{itemize}
-    \item \textbf{1,000,209 explicit ratings} on a 1--5 star scale
-    \item \textbf{6,040 users} with demographic data
-    \item \textbf{3,952 movies} with associated metadata
-    \item Collection period: approximately 2000--2001
+    \item \textbf{1,000,209 explicit ratings}
+    \item \textbf{6,040 users}
+    \item \textbf{3,952 movies} 
 \end{itemize}
 
-\subsection{User Metadata}
-
-For each user, the following demographic information is available:
-\begin{itemize}
-    \item \textbf{User ID}: unique identifier
-    \item \textbf{Gender}: M (male) or F (female)
-    \item \textbf{Age}: divided into ranges (e.g., 18-24, 25-34, 35-44, 45-49, 50-55, 56+)
-    \item \textbf{Occupation}: encoded in predefined categories (e.g., student, programmer, manager, etc.)
-    \item \textbf{ZIP Code}: residential zip code
-\end{itemize}
-
-\subsection{Movie Metadata}
-
-For each movie, the following information is available:
-\begin{itemize}
-    \item \textbf{Movie ID}: unique identifier
-    \item \textbf{Title}: includes release year in parentheses
-    \item \textbf{Genres}: one or more associated genres (Action, Comedy, Drama, etc.)
-\end{itemize}
 
 \subsection{Multimodal Extension}
 
 In the context of this project, the MovieLens 1M dataset has been enriched with multimodal data for each movie:
 
 \begin{itemize}
-    \item \textbf{Images}: movie posters or representative images (.jpg/.png format)
+    \item \textbf{Images}: movie posters or representative images (.jpg format)
     \item \textbf{Audio}: audio clips or associated soundtracks (.wav format)
     \item \textbf{Texts}: textual descriptions, synopses, or reviews (.txt format)
 \end{itemize}
@@ -51,60 +31,30 @@ All multimodal files are organized with the same basename corresponding to the M
 
 \subsection{Multimodal Embeddings}
 
-The multimodal embeddings were extracted using the \textbf{AudioCLIP} model, a multimodal extension of CLIP that supports images, audio, and text in a shared embedding space with consistent dimensionality.
-
+The multimodal embeddings were extracted using the \textbf{AudioCLIP} (see Section \ref{sec:AudioClip}) 
 \subsubsection{Extraction Process}
 
-The embedding extraction process is implemented in the \texttt{extract\_audioclip\_embeddings.py} script, which ensures robust handling of multimodal data through the following pipeline:
+The embedding extraction process is implemented in a script, which ensures robust handling of multimodal data through the following pipeline:
 
 \paragraph{File Discovery and Alignment}
-The script first scans three directories (\texttt{\_images}, \texttt{\_audios}, \texttt{\_texts}) and identifies files by their basename (e.g., movie ID). From the initial scan:
+The script first scans three directories with raw data and identifies files by their basename (e.g., movie ID). From the initial scan:
 \begin{itemize}
     \item 3,196 image files were found
     \item 3,535 audio files were found
     \item 3,197 text files were found
-    \item 3,635 unique basenames across all modalities
+    \item 3,635 unique names across all modalities
 \end{itemize}
 
 The script performs an \textbf{intersection} of basenames to ensure only movies with \textit{all three modalities} are processed, resulting in \textbf{3,096 candidate items}.
 
 \paragraph{Per-Modality Extraction with Error Handling}
+The extraction pipeline processes each modality with specific procedures:
 
-\textbf{Image Embeddings:}
 \begin{itemize}
-    \item Preprocessing: resize to 256px, center crop to 224×224, normalization with CLIP statistics
-    \item Batch processing via \texttt{model.encode\_image}
-    \item L2 normalization of output vectors
-    \item Error handling: corrupt images are logged and excluded
-\end{itemize}
-
-\textbf{Audio Embeddings (Sliding Window Mean):}
-\begin{itemize}
-    \item Sample rate: 44.1 kHz (resampled if necessary)
-    \item Sliding window approach with configurable parameters:
-    \begin{itemize}
-        \item Window length: 2.0 seconds (88,200 samples)
-        \item Stride: 1.0 seconds (50\% overlap)
-        \item Short audio handling: padded to minimum window length
-    \end{itemize}
-    \item Each window is encoded independently via \texttt{model.encode\_audio}
-    \item Final embedding: \textbf{mean aggregation} across all windows
-    \item Error handling: corrupted or empty audio files are logged and excluded
-\end{itemize}
-
-\textbf{Text Embeddings (Adaptive Chunking):}
-\begin{itemize}
-    \item CLIP tokenizer has a hard limit of 77 tokens per input
-    \item For texts exceeding this limit:
-    \begin{enumerate}
-        \item Split text into sentences (by `.`, `!`, `?`)
-        \item Greedily group sentences into chunks that fit within 77 tokens
-        \item If a chunk still exceeds the limit, iteratively reduce by 20\% until valid
-        \item Encode each chunk via \texttt{model.encode\_text}
-        \item Final embedding: \textbf{mean aggregation} across all chunks
-    \end{enumerate}
-    \item L2 normalization applied to all outputs
-    \item Error handling: unreadable files or processing failures are logged and excluded
+    \item \textbf{Images}: Resized to 224×224, normalized with CLIP statistics, batch processed
+    \item \textbf{Audio}: Sliding window approach (2s windows, 1s stride), mean aggregation across windows
+    \item \textbf{Text}: Adaptive chunking for 77-token CLIP limit, sentence-based splitting,
+    \item \textbf{Error handling}: Corrupted files logged and excluded from final dataset
 \end{itemize}
 
 \paragraph{Consistency Enforcement}
@@ -124,57 +74,85 @@ In the current extraction:
 
 \subsubsection{Output Files}
 
-The extracted embeddings are saved in NumPy format (.npy) in the \texttt{features\_mmrec/} folder:
+The extracted embeddings are saved in NumPy format (.npy)
 
 \begin{itemize}
     \item \texttt{images.npy}: visual embeddings, shape $(3095, 1024)$
     \item \texttt{audios.npy}: audio embeddings, shape $(3095, 1024)$
     \item \texttt{texts.npy}: textual embeddings, shape $(3095, 1024)$
     \item \texttt{item\_features.csv}: mapping between Movie ID and array index
+    \item \textbf{row $i$} in each file corresponds to the same movie
 \end{itemize}
 
-All three \texttt{.npy} files have:
+
+\subsection{Dataset Filtering and Remapping}
+
+After extracting multimodal embeddings, the interaction dataset (\texttt{movielens\_1m.inter}) undergoes a comprehensive filtering and remapping pipeline. This is necessary in order to properly use the MMRec framework
+
+\subsubsection{Pipeline Overview}
+The script first loads the original interaction file. Then, to ensure consistency with the extracted embeddings, the script filters interactions to include only movies present in \texttt{item\_features.csv} (i.e., movies with all three modalities: audio, images, and text).
+
+After this filtering:
 \begin{itemize}
-    \item \textbf{Identical number of rows} (3,095)
-    \item \textbf{Identical row order}: row $i$ in each file corresponds to the same movie
-    \item \textbf{Same embedding dimension} (1,024), matching AudioCLIP's output space
-    \item \textbf{L2-normalized vectors}: $\|\mathbf{v}\|_2 = 1$ for all embeddings
+    \item Valid items with complete multimodal features: \textbf{3,095}
+    \item Remaining interactions: depends on how many ratings reference the 3,095 valid movies
 \end{itemize}
 
-\paragraph{Item-to-Index Mapping (item\_features.csv)}
-The CSV file provides a lookup table to retrieve embeddings by Movie ID:
+\paragraph{Step 3: Core-k Filtering}
+To address data sparsity and ensure sufficient interaction density, the script applies \textbf{5-core filtering}, an iterative process that removes users and items with fewer than $k=5$ interactions until convergence.
 
-\begin{verbatim}
-item_id,idx
-10,0
-100,1
-1000,2
-...
-\end{verbatim}
-
-To access embeddings for movie ID \texttt{1000}:
+\textbf{Algorithm:}
 \begin{enumerate}
-    \item Lookup \texttt{idx=2} in \texttt{item\_features.csv}
-    \item Load \texttt{images[2]}, \texttt{audios[2]}, \texttt{texts[2]}
-    \item All three vectors are guaranteed to correspond to the same movie
+    \item Count interactions per user and per item
+    \item Remove users with $< 5$ interactions
+    \item Remove items with $< 5$ interactions
+    \item Repeat steps 1--3 until no further removals occur (convergence)
 \end{enumerate}
 
-\subsection{Multimodal Dataset Statistics}
 
-\begin{table}[h]
-\centering
-\begin{tabular}{lc}
-\hline
-\textbf{Metric} & \textbf{Count} \\
-\hline
-Total unique movie IDs & 3,635 \\
-Movies with all 3 modalities & 3,096 \\
-Extraction failures & 1 (audio) \\
-\textbf{Final dataset size} & \textbf{3,095} \\
-Embedding dimension & 1,024 \\
-\hline
-\end{tabular}
-\caption{Multimodal dataset statistics after extraction and alignment}
-\end{table}
+\paragraph{Step 4: ID Remapping}
+After filtering, user and item IDs may no longer be contiguous (e.g., user IDs might be [1, 5, 12, ...]). To ensure compatibility with matrix-based recommender systems, the script remaps all IDs to contiguous ranges starting from 0.
 
-The final dataset represents \textbf{78.3\%} of the original MovieLens 1M catalog (3,095 out of 3,952 movies), limited by the availability of complete multimodal data (images, audio, text) and successful extraction across all modalities.
+\textbf{User remapping:}
+\begin{itemize}
+    \item Original IDs: arbitrary integers
+    \item New IDs: $0, 1, 2, \ldots, m-1$ (where $m$ is the number of users after filtering)
+\end{itemize}
+
+\textbf{Item remapping:}
+\begin{itemize}
+    \item Original IDs: arbitrary integers
+    \item New IDs: $0, 1, 2, \ldots, n-1$ (where $n$ is the number of items after filtering)
+\end{itemize}
+
+\paragraph{Step 5: Embedding Reindexing}
+The original \texttt{.npy} files (\texttt{audios.npy}, \texttt{images.npy}, \texttt{texts.npy}) are indexed according to the pre-filtering item set. After remapping, the script reconstructs the embedding arrays to match the new item indices:
+
+\begin{enumerate}
+    \item For each new item index $i \in [0, n-1]$:
+    \begin{itemize}
+        \item Lookup the original item ID from the inverse mapping
+        \item Find the old index in \texttt{item\_features.csv}
+        \item Copy the corresponding embedding vectors from the original \texttt{.npy} files
+    \end{itemize}
+    \item Save the reindexed embeddings as:
+    \begin{itemize}
+        \item \texttt{audio\_filtered.npy}
+        \item \texttt{image\_filtered.npy}
+        \item \texttt{text\_filtered.npy}
+    \end{itemize}
+\end{enumerate}
+
+\paragraph{Step 6: Output Files}
+The script generates the following files:
+
+\begin{itemize}
+    \item \texttt{movielens\_1m\_filtered.inter}: filtered interaction file with remapped IDs
+    \item \texttt{audio\_filtered.npy}: reindexed audio embeddings, shape $(n, 1024)$
+    \item \texttt{image\_filtered.npy}: reindexed image embeddings, shape $(n, 1024)$
+    \item \texttt{text\_filtered.npy}: reindexed text embeddings, shape $(n, 1024)$
+    \item \texttt{user\_mapping.csv}: mapping between old and new user IDs
+    \item \texttt{item\_mapping.csv}: mapping between old and new item IDs
+    \item \texttt{item\_features\_filtered.csv}: updated item-to-index mapping
+\end{itemize}
+

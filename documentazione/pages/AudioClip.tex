@@ -1,4 +1,5 @@
 \section{Contrastive Learning and AudioCLIP}
+
 \subsection{Contrastive Learning}
 Contrastive Learning is self-supervised representation learning by training a model to differentiate between similar and dissimilar samples.\cite{ContrastiveLearning}. In few words, contrastive learning is a technique used to learn a feature space where similar samples are close together and dissimilar samples are far apart. To achieve this, a specific loss function known as \textbf{Contrastive Loss} is used:
 \begin{equation}
@@ -22,6 +23,7 @@ CLIP, which stands for Contrastive Language-Image Pre-training, is a neural netw
 \end{figure}
 
 \subsection{AudioCLIP}
+\label{sec:AudioClip}
 AudioCLIP \cite{AudioCLIP} is an extension of the CLIP model that incorporates an additional audio modality, enabling it to understand and relate audio data alongside text and images. The architecture of AudioCLIP consists of three main components:
 \begin{itemize}
     \item \textbf{A CLIP Model} to handle text and image modalities. In particual a ResNet based CLIP model is used

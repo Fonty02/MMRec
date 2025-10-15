@@ -11,14 +11,16 @@
 \contentsline {subsection}{\numberline {3.2}AudioCLIP in Multimodal Recommender Systems}{9}{}%
 \contentsline {section}{\numberline {4}Dataset}{10}{}%
 \contentsline {subsection}{\numberline {4.1}Dataset Characteristics}{10}{}%
-\contentsline {subsection}{\numberline {4.2}User Metadata}{10}{}%
-\contentsline {subsection}{\numberline {4.3}Movie Metadata}{10}{}%
-\contentsline {subsection}{\numberline {4.4}Multimodal Extension}{11}{}%
-\contentsline {subsection}{\numberline {4.5}Multimodal Embeddings}{11}{}%
-\contentsline {subsubsection}{\numberline {4.5.1}Extraction Process}{11}{}%
+\contentsline {subsection}{\numberline {4.2}Multimodal Extension}{10}{}%
+\contentsline {subsection}{\numberline {4.3}Multimodal Embeddings}{10}{}%
+\contentsline {subsubsection}{\numberline {4.3.1}Extraction Process}{10}{}%
 \contentsline {paragraph}{File Discovery and Alignment}{11}{}%
-\contentsline {paragraph}{Per-Modality Extraction with Error Handling}{12}{}%
-\contentsline {paragraph}{Consistency Enforcement}{13}{}%
-\contentsline {subsubsection}{\numberline {4.5.2}Output Files}{13}{}%
-\contentsline {paragraph}{Item-to-Index Mapping (item\_features.csv)}{14}{}%
-\contentsline {subsection}{\numberline {4.6}Multimodal Dataset Statistics}{14}{}%
+\contentsline {paragraph}{Per-Modality Extraction with Error Handling}{11}{}%
+\contentsline {paragraph}{Consistency Enforcement}{11}{}%
+\contentsline {subsubsection}{\numberline {4.3.2}Output Files}{12}{}%
+\contentsline {subsection}{\numberline {4.4}Dataset Filtering and Remapping}{12}{}%
+\contentsline {subsubsection}{\numberline {4.4.1}Pipeline Overview}{12}{}%
+\contentsline {paragraph}{Step 3: Core-k Filtering}{12}{}%
+\contentsline {paragraph}{Step 4: ID Remapping}{13}{}%
+\contentsline {paragraph}{Step 5: Embedding Reindexing}{13}{}%
+\contentsline {paragraph}{Step 6: Output Files}{13}{}%
