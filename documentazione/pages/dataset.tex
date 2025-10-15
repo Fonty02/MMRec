@@ -51,43 +51,133 @@ All multimodal files are organized with the same basename corresponding to the M
 
 \subsection{Multimodal Embeddings}
 
-The multimodal embeddings were extracted using the \textbf{AudioCLIP} model, a multimodal extension of CLIP that supports images, audio, and text in a shared embedding space.
+The multimodal embeddings were extracted using the \textbf{AudioCLIP} model, a multimodal extension of CLIP that supports images, audio, and text in a shared embedding space with consistent dimensionality.
 
 \subsubsection{Extraction Process}
 
-The embedding extraction process is implemented in the \texttt{extract\_audioclip\_embeddings.py} script and includes:
+The embedding extraction process is implemented in the \texttt{extract\_audioclip\_embeddings.py} script, which ensures robust handling of multimodal data through the following pipeline:
 
-\begin{enumerate}
-    \item \textbf{Image preprocessing}: resizing, center crop, and normalization according to CLIP parameters
-    \item \textbf{Image embedding extraction}: batch processing via \texttt{model.encode\_image}
-    \item \textbf{Audio embedding extraction}: use of sliding windows with configurable parameters:
+\paragraph{File Discovery and Alignment}
+The script first scans three directories (\texttt{\_images}, \texttt{\_audios}, \texttt{\_texts}) and identifies files by their basename (e.g., movie ID). From the initial scan:
+\begin{itemize}
+    \item 3,196 image files were found
+    \item 3,535 audio files were found
+    \item 3,197 text files were found
+    \item 3,635 unique basenames across all modalities
+\end{itemize}
+
+The script performs an \textbf{intersection} of basenames to ensure only movies with \textit{all three modalities} are processed, resulting in \textbf{3,096 candidate items}.
+
+\paragraph{Per-Modality Extraction with Error Handling}
+
+\textbf{Image Embeddings:}
+\begin{itemize}
+    \item Preprocessing: resize to 256px, center crop to 224×224, normalization with CLIP statistics
+    \item Batch processing via \texttt{model.encode\_image}
+    \item L2 normalization of output vectors
+    \item Error handling: corrupt images are logged and excluded
+\end{itemize}
+
+\textbf{Audio Embeddings (Sliding Window Mean):}
+\begin{itemize}
+    \item Sample rate: 44.1 kHz (resampled if necessary)
+    \item Sliding window approach with configurable parameters:
     \begin{itemize}
-        \item Window length: 2.0 seconds (default)
-        \item Stride: 1.0 seconds (default)
-        \item Sample rate: 44.1 kHz
-        \item Aggregation: mean of window embeddings
+        \item Window length: 2.0 seconds (88,200 samples)
+        \item Stride: 1.0 seconds (50\% overlap)
+        \item Short audio handling: padded to minimum window length
     \end{itemize}
-    \item \textbf{Text embedding extraction}: BPE tokenization and batch processing via \texttt{model.encode\_text}
-    \item \textbf{L2 normalization}: applied to all embeddings to ensure consistency
-\end{enumerate}
+    \item Each window is encoded independently via \texttt{model.encode\_audio}
+    \item Final embedding: \textbf{mean aggregation} across all windows
+    \item Error handling: corrupted or empty audio files are logged and excluded
+\end{itemize}
 
-\subsubsection{Output}
+\textbf{Text Embeddings (Adaptive Chunking):}
+\begin{itemize}
+    \item CLIP tokenizer has a hard limit of 77 tokens per input
+    \item For texts exceeding this limit:
+    \begin{enumerate}
+        \item Split text into sentences (by `.`, `!`, `?`)
+        \item Greedily group sentences into chunks that fit within 77 tokens
+        \item If a chunk still exceeds the limit, iteratively reduce by 20\% until valid
+        \item Encode each chunk via \texttt{model.encode\_text}
+        \item Final embedding: \textbf{mean aggregation} across all chunks
+    \end{enumerate}
+    \item L2 normalization applied to all outputs
+    \item Error handling: unreadable files or processing failures are logged and excluded
+\end{itemize}
+
+\paragraph{Consistency Enforcement}
+After extraction, the script enforces \textbf{strict alignment}:
+\begin{itemize}
+    \item Only items successfully extracted in \textit{all three modalities} are retained
+    \item Failed extractions (e.g., 1 audio file corrupted) result in removal from all modalities
+    \item Final output arrays have \textbf{identical row counts} and order
+\end{itemize}
+
+In the current extraction:
+\begin{itemize}
+    \item 3,096 items had all three modalities available
+    \item 1 audio file failed extraction (corrupted EOF)
+    \item Final dataset: \textbf{3,095 items} with complete embeddings
+\end{itemize}
+
+\subsubsection{Output Files}
 
 The extracted embeddings are saved in NumPy format (.npy) in the \texttt{features\_mmrec/} folder:
 
 \begin{itemize}
-    \item \texttt{images.npy}: visual embeddings, shape $(N, D)$
-    \item \texttt{audios.npy}: audio embeddings, shape $(N, D)$
-    \item \texttt{texts.npy}: textual embeddings, shape $(N, D)$
-    \item \texttt{concatenated.npy}: concatenated embeddings (optional), shape $(N, 3D)$
+    \item \texttt{images.npy}: visual embeddings, shape $(3095, 1024)$
+    \item \texttt{audios.npy}: audio embeddings, shape $(3095, 1024)$
+    \item \texttt{texts.npy}: textual embeddings, shape $(3095, 1024)$
     \item \texttt{item\_features.csv}: mapping between Movie ID and array index
 \end{itemize}
 
-where $N$ is the number of movies with complete multimodal data and $D$ is the dimensionality of AudioCLIP embeddings (typically 1024).
+All three \texttt{.npy} files have:
+\begin{itemize}
+    \item \textbf{Identical number of rows} (3,095)
+    \item \textbf{Identical row order}: row $i$ in each file corresponds to the same movie
+    \item \textbf{Same embedding dimension} (1,024), matching AudioCLIP's output space
+    \item \textbf{L2-normalized vectors}: $\|\mathbf{v}\|_2 = 1$ for all embeddings
+\end{itemize}
+
+\paragraph{Item-to-Index Mapping (item\_features.csv)}
+The CSV file provides a lookup table to retrieve embeddings by Movie ID:
+
+\begin{verbatim}
+item_id,idx
+10,0
+100,1
+1000,2
+...
+\end{verbatim}
+
+To access embeddings for movie ID \texttt{1000}:
+\begin{enumerate}
+    \item Lookup \texttt{idx=2} in \texttt{item\_features.csv}
+    \item Load \texttt{images[2]}, \texttt{audios[2]}, \texttt{texts[2]}
+    \item All three vectors are guaranteed to correspond to the same movie
+\end{enumerate}
 
 \subsection{Multimodal Dataset Statistics}
 
-After embedding extraction and removal of any corrupted or missing files, the final dataset contains only items for which all three modalities (image, audio, text) were successfully extracted. Precise statistics are reported in the execution logs of the extraction script.
+\begin{table}[h]
+\centering
+\begin{tabular}{lc}
+\hline
+\textbf{Metric} & \textbf{Count} \\
+\hline
+Total unique movie IDs & 3,635 \\
+Movies with all 3 modalities & 3,096 \\
+Extraction failures & 1 (audio) \\
+\textbf{Final dataset size} & \textbf{3,095} \\
+Embedding dimension & 1,024 \\
+\hline
+\end{tabular}
+\caption{Multimodal dataset statistics after extraction and alignment}
+\end{table}
+
+The final dataset represents \textbf{78.3\%} of the original MovieLens 1M catalog (3,095 out of 3,952 movies), limited by the availability of complete multimodal data (images, audio, text) and successful extraction across all modalities.
 
 
 
