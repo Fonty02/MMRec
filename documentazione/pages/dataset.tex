@@ -1,0 +1,102 @@
+\section{Dataset}
+
+The dataset used in this project is \textbf{MovieLens 1M}, a collection of explicit movie ratings widely used in recommender systems research.
+
+\subsection{Dataset Characteristics}
+
+MovieLens 1M contains:
+\begin{itemize}
+    \item \textbf{1,000,209 explicit ratings} on a 1--5 star scale
+    \item \textbf{6,040 users} with demographic data
+    \item \textbf{3,952 movies} with associated metadata
+    \item Collection period: approximately 2000--2001
+\end{itemize}
+
+\subsection{User Metadata}
+
+For each user, the following demographic information is available:
+\begin{itemize}
+    \item \textbf{User ID}: unique identifier
+    \item \textbf{Gender}: M (male) or F (female)
+    \item \textbf{Age}: divided into ranges (e.g., 18-24, 25-34, 35-44, 45-49, 50-55, 56+)
+    \item \textbf{Occupation}: encoded in predefined categories (e.g., student, programmer, manager, etc.)
+    \item \textbf{ZIP Code}: residential zip code
+\end{itemize}
+
+\subsection{Movie Metadata}
+
+For each movie, the following information is available:
+\begin{itemize}
+    \item \textbf{Movie ID}: unique identifier
+    \item \textbf{Title}: includes release year in parentheses
+    \item \textbf{Genres}: one or more associated genres (Action, Comedy, Drama, etc.)
+\end{itemize}
+
+\subsection{Multimodal Extension}
+
+In the context of this project, the MovieLens 1M dataset has been enriched with multimodal data for each movie:
+
+\begin{itemize}
+    \item \textbf{Images}: movie posters or representative images (.jpg/.png format)
+    \item \textbf{Audio}: audio clips or associated soundtracks (.wav format)
+    \item \textbf{Texts}: textual descriptions, synopses, or reviews (.txt format)
+\end{itemize}
+
+All multimodal files are organized with the same basename corresponding to the Movie ID, ensuring correspondence between different modalities. For example, for the movie with ID \texttt{1}:
+\begin{itemize}
+    \item Image: \texttt{ml1m/\_images/1.jpg}
+    \item Audio: \texttt{ml1m/\_audios/1.wav}
+    \item Text: \texttt{ml1m/\_texts/1.txt}
+\end{itemize}
+
+\subsection{Multimodal Embeddings}
+
+The multimodal embeddings were extracted using the \textbf{AudioCLIP} model, a multimodal extension of CLIP that supports images, audio, and text in a shared embedding space.
+
+\subsubsection{Extraction Process}
+
+The embedding extraction process is implemented in the \texttt{extract\_audioclip\_embeddings.py} script and includes:
+
+\begin{enumerate}
+    \item \textbf{Image preprocessing}: resizing, center crop, and normalization according to CLIP parameters
+    \item \textbf{Image embedding extraction}: batch processing via \texttt{model.encode\_image}
+    \item \textbf{Audio embedding extraction}: use of sliding windows with configurable parameters:
+    \begin{itemize}
+        \item Window length: 2.0 seconds (default)
+        \item Stride: 1.0 seconds (default)
+        \item Sample rate: 44.1 kHz
+        \item Aggregation: mean of window embeddings
+    \end{itemize}
+    \item \textbf{Text embedding extraction}: BPE tokenization and batch processing via \texttt{model.encode\_text}
+    \item \textbf{L2 normalization}: applied to all embeddings to ensure consistency
+\end{enumerate}
+
+\subsubsection{Output}
+
+The extracted embeddings are saved in NumPy format (.npy) in the \texttt{features\_mmrec/} folder:
+
+\begin{itemize}
+    \item \texttt{images.npy}: visual embeddings, shape $(N, D)$
+    \item \texttt{audios.npy}: audio embeddings, shape $(N, D)$
+    \item \texttt{texts.npy}: textual embeddings, shape $(N, D)$
+    \item \texttt{concatenated.npy}: concatenated embeddings (optional), shape $(N, 3D)$
+    \item \texttt{item\_features.csv}: mapping between Movie ID and array index
+\end{itemize}
+
+where $N$ is the number of movies with complete multimodal data and $D$ is the dimensionality of AudioCLIP embeddings (typically 1024).
+
+\subsection{Multimodal Dataset Statistics}
+
+After embedding extraction and removal of any corrupted or missing files, the final dataset contains only items for which all three modalities (image, audio, text) were successfully extracted. Precise statistics are reported in the execution logs of the extraction script.
+
+
+
+
+File trovati: 3196 immagini, 3535 audio, 3197 testi
+
+Analisi basename: 3635 nomi unici totali
+  ⚠ 439 nomi senza immagine. Esempi: ['1014', '1019', '1039', '1045', '1052', '1058', '106', '1073', '109', '1106']
+  ⚠ 100 nomi senza audio. Esempi: ['108', '1142', '1164', '121', '1257', '1348', '137', '138', '1420', '1421']
+  ⚠ 438 nomi senza testo. Esempi: ['1014', '1019', '1039', '1045', '1052', '1058', '106', '1073', '109', '1106']
+
+✓ Trovati 3096 campioni con TUTTE E 3 le modalità. Esempio: ['10', '100', '1000', '1002', '1003']
