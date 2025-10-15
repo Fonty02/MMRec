@@ -9,3 +9,16 @@
 \contentsline {subsection}{\numberline {3.1}CLIP in Multimodal Recommender Systems}{8}{}%
 \contentsline {paragraph}{End-To-End Training}{8}{}%
 \contentsline {subsection}{\numberline {3.2}AudioCLIP in Multimodal Recommender Systems}{9}{}%
+\contentsline {section}{\numberline {4}Dataset}{10}{}%
+\contentsline {subsection}{\numberline {4.1}Dataset Characteristics}{10}{}%
+\contentsline {subsection}{\numberline {4.2}User Metadata}{10}{}%
+\contentsline {subsection}{\numberline {4.3}Movie Metadata}{10}{}%
+\contentsline {subsection}{\numberline {4.4}Multimodal Extension}{11}{}%
+\contentsline {subsection}{\numberline {4.5}Multimodal Embeddings}{11}{}%
+\contentsline {subsubsection}{\numberline {4.5.1}Extraction Process}{11}{}%
+\contentsline {paragraph}{File Discovery and Alignment}{11}{}%
+\contentsline {paragraph}{Per-Modality Extraction with Error Handling}{12}{}%
+\contentsline {paragraph}{Consistency Enforcement}{13}{}%
+\contentsline {subsubsection}{\numberline {4.5.2}Output Files}{13}{}%
+\contentsline {paragraph}{Item-to-Index Mapping (item\_features.csv)}{14}{}%
+\contentsline {subsection}{\numberline {4.6}Multimodal Dataset Statistics}{14}{}%
