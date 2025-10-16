@@ -30,12 +30,17 @@ class VBPR(GeneralRecommender):
         # define layers and loss
         self.u_embedding = nn.Parameter(nn.init.xavier_uniform_(torch.empty(self.n_users, self.u_embedding_size * 2)))
         self.i_embedding = nn.Parameter(nn.init.xavier_uniform_(torch.empty(self.n_items, self.i_embedding_size)))
-        if self.v_feat is not None and self.t_feat is not None:
-            self.item_raw_features = torch.cat((self.t_feat, self.v_feat), -1)
-        elif self.v_feat is not None:
-            self.item_raw_features = self.v_feat
-        else:
-            self.item_raw_features = self.t_feat
+        
+        # Concatenate all available features (visual, text, audio)
+        features_list = []
+        if self.t_feat is not None:
+            features_list.append(self.t_feat)
+        if self.v_feat is not None:
+            features_list.append(self.v_feat)
+        if self.a_feat is not None:
+            features_list.append(self.a_feat)
+        
+        self.item_raw_features = torch.cat(features_list, -1) if len(features_list) > 0 else None
 
         self.item_linear = nn.Linear(self.item_raw_features.shape[1], self.i_embedding_size)
         self.loss = BPRLoss()

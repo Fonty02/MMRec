@@ -14,6 +14,76 @@ from utils.configurator import Config
 from utils.utils import init_seed, get_model, get_trainer, dict2str
 import platform
 import os
+import csv
+from datetime import datetime
+
+
+def save_results_to_csv(config, hyper_ret, best_test_idx, csv_filename):
+    """
+    Salva i risultati dell'addestramento in un file CSV
+    """
+    # Crea la directory reports se non esiste
+    reports_dir = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), 'reports')
+    if not os.path.exists(reports_dir):
+        reports_dir = os.path.join(os.getcwd(), 'reports')
+        if not os.path.exists(reports_dir):
+            os.makedirs(reports_dir)
+    
+    csv_path = os.path.join(reports_dir, csv_filename)
+    
+    # Prepara le intestazioni
+    fieldnames = ['timestamp', 'model', 'dataset', 'run_id', 'is_best']
+    
+    # Aggiungi i nomi degli iperparametri
+    for param in config['hyper_parameters']:
+        fieldnames.append(param)
+    
+    # Aggiungi le metriche di validazione e test
+    if hyper_ret:
+        valid_metrics = list(hyper_ret[0][1].keys())
+        test_metrics = list(hyper_ret[0][2].keys())
+        
+        for metric in valid_metrics:
+            fieldnames.append(f'valid_{metric}')
+        for metric in test_metrics:
+            fieldnames.append(f'test_{metric}')
+    
+    # Scrivi i risultati nel CSV
+    file_exists = os.path.isfile(csv_path)
+    
+    with open(csv_path, 'a', newline='') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        
+        # Scrivi l'header solo se il file è nuovo
+        if not file_exists:
+            writer.writeheader()
+        
+        # Scrivi ogni risultato
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        for idx, (hyper_tuple, valid_result, test_result) in enumerate(hyper_ret):
+            row = {
+                'timestamp': timestamp,
+                'model': config['model'],
+                'dataset': config['dataset'],
+                'run_id': idx + 1,
+                'is_best': 'Yes' if idx == best_test_idx else 'No'
+            }
+            
+            # Aggiungi gli iperparametri
+            for param, value in zip(config['hyper_parameters'], hyper_tuple):
+                row[param] = value
+            
+            # Aggiungi le metriche di validazione
+            for metric, value in valid_result.items():
+                row[f'valid_{metric}'] = value
+            
+            # Aggiungi le metriche di test
+            for metric, value in test_result.items():
+                row[f'test_{metric}'] = value
+            
+            writer.writerow(row)
+    
+    return csv_path
 
 
 def quick_start(model, dataset, config_dict, save_model=True, mg=False):
@@ -105,4 +175,10 @@ def quick_start(model, dataset, config_dict, save_model=True, mg=False):
                                                                    hyper_ret[best_test_idx][0],
                                                                    dict2str(hyper_ret[best_test_idx][1]),
                                                                    dict2str(hyper_ret[best_test_idx][2])))
+
+    # Salva i risultati in CSV
+    csv_filename = f"training_results_{config['model']}_{config['dataset']}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
+    csv_path = save_results_to_csv(config, hyper_ret, best_test_idx, csv_filename)
+    logger.info(f'\n📊 Results saved to CSV: {csv_path}')
+
 
