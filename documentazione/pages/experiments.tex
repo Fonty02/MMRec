@@ -4,13 +4,15 @@ Here we can find a comparison between the best result of the baseline \cite{Spil
 \begin{table}[H]
     \centering
     \begin{adjustbox}{max width=\textwidth}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
         \hline
-        \textbf{Model} & \textbf{Modality} & \textbf{rec@10} & \textbf{ndcg@10} & \textbf{map@10} & \textbf{rec@20} & \textbf{ndcg@20} & \textbf{map@20} \\
+        \textbf{Model} & \textbf{Modality} & \textbf{rec@10} & \textbf{prec@10} & \textbf{ndcg@10} & \textbf{map@10} & \textbf{rec@20} & \textbf{prec@20} & \textbf{ndcg@20} & \textbf{map@20} \\
         \hline
-        VBPR & Text (baseline) & 0.132 & 0.1975 & 0.0982 & 0.2123 & 0.2127 & 0.1358 \\
+        VBPR & Text (baseline) & 0.132 & \textbf{0.1624} & \textbf{0.1975} & \textbf{0.0982} & 0.2123 & \textbf{0.1358} & 0.2127 & \textbf{0.1358} \\
         \hline
-        VBPR & Text+Image+Audio & 0.1570 & 0.1922 & 0.0969 & 0.2466 & 0.2147 & 0.0957 \\
+        VBPR & Text+Audio (baseline) & 0.1265 & 0.1524(text+video) & 0.1849 & 0.0905 & 0.2052 & 0.129(text+video) & 0.2011 & 0.0845 \\
+        \hline
+        VBPR & Text+Image+Audio & \textbf{0.1570} & 0.1476 & 0.1922 & 0.0969 & \textbf{0.2466} & 0.1225 & \textbf{0.2147} & 0.0957 \\
         \hline
     \end{tabular}
     \end{adjustbox}
