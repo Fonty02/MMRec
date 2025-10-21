@@ -1,8 +1,14 @@
-\section{Dataset}
+\section{Experimental Settings}
+\subsection{Research Questions}
+The main research question that this project aims to address is the following:
+\begin{itemize}
+    \item \textbf{RQ1}: Can the integration of aligned multimodal embeddings (text, image, audio) enhance the performance of recommender systems compared to unimodal or non-aligned multimodal approaches?
+\end{itemize}  
+\subsection{Dataset}
 
 The dataset used in this project is \textbf{MovieLens 1M}, a collection of explicit movie ratings widely used in recommender systems research.
 
-\subsection{Dataset Characteristics}
+\subsubsection{Dataset Characteristics}
 
 MovieLens 1M contains:
 \begin{itemize}
@@ -12,7 +18,7 @@ MovieLens 1M contains:
 \end{itemize}
 
 
-\subsection{Multimodal Extension}
+\subsubsection{Multimodal Extension}
 
 In the context of this project, the MovieLens 1M dataset has been enriched with multimodal data for each movie:
 
@@ -29,10 +35,10 @@ All multimodal files are organized with the same basename corresponding to the M
     \item Text: \texttt{ml1m/\_texts/1.txt}
 \end{itemize}
 
-\subsection{Multimodal Embeddings}
+\subsubsection{Multimodal Embeddings}
 
-The multimodal embeddings were extracted using the \textbf{AudioCLIP} (see Section \ref{sec:AudioClip}) 
-\subsubsection{Extraction Process}
+The multimodal embeddings were extracted using the \textbf{AudioCLIP} (see subsection \ref{sec:AudioClip}) 
+\paragraph{Extraction Process}
 
 The embedding extraction process is implemented in a script, which ensures robust handling of multimodal data through the following pipeline:
 
@@ -45,7 +51,7 @@ The script first scans three directories with raw data and identifies files by t
     \item 3,635 unique names across all modalities
 \end{itemize}
 
-The script performs an \textbf{intersection} of basenames to ensure only movies with \textit{all three modalities} are processed, resulting in \textbf{3,096 candidate items}.
+The script performs an \textbf{intersubsection} of basenames to ensure only movies with \textit{all three modalities} are processed, resulting in \textbf{3,096 candidate items}.
 
 \paragraph{Per-Modality Extraction with Error Handling}
 The extraction pipeline processes each modality with specific procedures:
@@ -72,7 +78,7 @@ In the current extraction:
     \item Final dataset: \textbf{3,095 items} with complete embeddings
 \end{itemize}
 
-\subsubsection{Output Files}
+\paragraph{Output Files}
 
 The extracted embeddings are saved in NumPy format (.npy)
 
@@ -85,11 +91,11 @@ The extracted embeddings are saved in NumPy format (.npy)
 \end{itemize}
 
 
-\subsection{Dataset Filtering and Remapping}
+\subsubsection{Dataset Filtering and Remapping}
 
 After extracting multimodal embeddings, the interaction dataset (\texttt{movielens\_1m.inter}) undergoes a comprehensive filtering and remapping pipeline. This is necessary in order to properly use the MMRec framework
 
-\subsubsection{Pipeline Overview}
+\paragraph{Pipeline Overview}
 The script first loads the original interaction file. Then, to ensure consistency with the extracted embeddings, the script filters interactions to include only movies present in \texttt{item\_features.csv} (i.e., movies with all three modalities: audio, images, and text).
 
 After this filtering:

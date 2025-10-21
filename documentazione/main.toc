@@ -1,28 +1,31 @@
-\contentsline {section}{\numberline {1}Multimodal Recommender System}{2}{}%
+\contentsline {section}{\numberline {1}Introduction}{2}{}%
 \contentsline {subsection}{\numberline {1.1}Recommender Systems}{2}{}%
 \contentsline {subsection}{\numberline {1.2}Multimodal Recommender Systems}{3}{}%
-\contentsline {section}{\numberline {2}Contrastive Learning and AudioCLIP}{5}{}%
-\contentsline {subsection}{\numberline {2.1}Contrastive Learning}{5}{}%
-\contentsline {subsection}{\numberline {2.2}CLIP}{5}{}%
-\contentsline {subsection}{\numberline {2.3}AudioCLIP}{6}{}%
-\contentsline {section}{\numberline {3}Contrastive Learning arcitetures in Multimodal Recommender Systems}{8}{}%
-\contentsline {subsection}{\numberline {3.1}CLIP in Multimodal Recommender Systems}{8}{}%
+\contentsline {section}{\numberline {2}Aligned multimodal models}{5}{}%
+\contentsline {subsection}{\numberline {2.1}Contrastive Learning and AudioCLIP}{5}{}%
+\contentsline {subsubsection}{\numberline {2.1.1}Contrastive Learning}{5}{}%
+\contentsline {subsubsection}{\numberline {2.1.2}CLIP}{5}{}%
+\contentsline {subsubsection}{\numberline {2.1.3}AudioCLIP}{6}{}%
+\contentsline {subsection}{\numberline {2.2}Contrastive Learning arcitetures in Multimodal Recommender Systems}{7}{}%
+\contentsline {subsubsection}{\numberline {2.2.1}CLIP in Multimodal Recommender Systems}{7}{}%
 \contentsline {paragraph}{End-To-End Training}{8}{}%
-\contentsline {subsection}{\numberline {3.2}AudioCLIP in Multimodal Recommender Systems}{9}{}%
-\contentsline {section}{\numberline {4}Dataset}{10}{}%
-\contentsline {subsection}{\numberline {4.1}Dataset Characteristics}{10}{}%
-\contentsline {subsection}{\numberline {4.2}Multimodal Extension}{10}{}%
-\contentsline {subsection}{\numberline {4.3}Multimodal Embeddings}{10}{}%
-\contentsline {subsubsection}{\numberline {4.3.1}Extraction Process}{10}{}%
+\contentsline {subsubsection}{\numberline {2.2.2}AudioCLIP in Multimodal Recommender Systems}{9}{}%
+\contentsline {section}{\numberline {3}Experimental Settings}{10}{}%
+\contentsline {subsection}{\numberline {3.1}Research Questions}{10}{}%
+\contentsline {subsection}{\numberline {3.2}Dataset}{10}{}%
+\contentsline {subsubsection}{\numberline {3.2.1}Dataset Characteristics}{10}{}%
+\contentsline {subsubsection}{\numberline {3.2.2}Multimodal Extension}{10}{}%
+\contentsline {subsubsection}{\numberline {3.2.3}Multimodal Embeddings}{11}{}%
+\contentsline {paragraph}{Extraction Process}{11}{}%
 \contentsline {paragraph}{File Discovery and Alignment}{11}{}%
 \contentsline {paragraph}{Per-Modality Extraction with Error Handling}{11}{}%
-\contentsline {paragraph}{Consistency Enforcement}{11}{}%
-\contentsline {subsubsection}{\numberline {4.3.2}Output Files}{12}{}%
-\contentsline {subsection}{\numberline {4.4}Dataset Filtering and Remapping}{12}{}%
-\contentsline {subsubsection}{\numberline {4.4.1}Pipeline Overview}{12}{}%
-\contentsline {paragraph}{Step 3: Core-k Filtering}{12}{}%
+\contentsline {paragraph}{Consistency Enforcement}{12}{}%
+\contentsline {paragraph}{Output Files}{12}{}%
+\contentsline {subsubsection}{\numberline {3.2.4}Dataset Filtering and Remapping}{12}{}%
+\contentsline {paragraph}{Pipeline Overview}{12}{}%
+\contentsline {paragraph}{Step 3: Core-k Filtering}{13}{}%
 \contentsline {paragraph}{Step 4: ID Remapping}{13}{}%
 \contentsline {paragraph}{Step 5: Embedding Reindexing}{13}{}%
-\contentsline {paragraph}{Step 6: Output Files}{13}{}%
-\contentsline {section}{\numberline {5}Experiments}{15}{}%
-\contentsline {subsection}{\numberline {5.1}MovieLens\_1M}{15}{}%
+\contentsline {paragraph}{Step 6: Output Files}{14}{}%
+\contentsline {section}{\numberline {4}Experiments}{15}{}%
+\contentsline {subsection}{\numberline {4.1}MovieLens\_1M}{15}{}%

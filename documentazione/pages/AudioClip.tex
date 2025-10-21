@@ -1,6 +1,8 @@
-\section{Contrastive Learning and AudioCLIP}
+\section{Aligned multimodal models}
 
-\subsection{Contrastive Learning}
+\subsection{Contrastive Learning and AudioCLIP}
+
+\subsubsection{Contrastive Learning}
 Contrastive Learning is self-supervised representation learning by training a model to differentiate between similar and dissimilar samples.\cite{ContrastiveLearning}. In few words, contrastive learning is a technique used to learn a feature space where similar samples are close together and dissimilar samples are far apart. To achieve this, a specific loss function known as \textbf{Contrastive Loss} is used:
 \begin{equation}
 \ell_{i,j} = -\log \frac{\exp(\text{sim}(z_i, z_j)/\tau)}{\sum_{k=1}^{2N} [k \neq i] \exp(\text{sim}(z_i, z_k)/\tau)},
@@ -13,7 +15,7 @@ where $\text{sim}(z_i, z_j)$ represents the similarity between two feature vecto
     \caption{Conceptual representation of Contrastive Learning}
 \end{figure}
 
-\subsection{CLIP}
+\subsubsection{CLIP}
 CLIP, which stands for Contrastive Language-Image Pre-training, is a neural network architecture developed by OpenAI\cite{CLIP} that uses Contrastive Learning to connect textual and visual information. The main idea behind CLIP is that visual and textual embeddings lives in the same feature space. Given the textual description of an image and the image itself, the embeddings returned by the model should be close together in the feature space. In few words, CLIP is trained to predict which images are most relevant to a given text prompt, and vice versa.
 
 \begin{figure}[H]
@@ -22,7 +24,7 @@ CLIP, which stands for Contrastive Language-Image Pre-training, is a neural netw
     \caption{Conceptual representation of CLIP architecture}
 \end{figure}
 
-\subsection{AudioCLIP}
+\subsubsection{AudioCLIP}
 \label{sec:AudioClip}
 AudioCLIP \cite{AudioCLIP} is an extension of the CLIP model that incorporates an additional audio modality, enabling it to understand and relate audio data alongside text and images. The architecture of AudioCLIP consists of three main components:
 \begin{itemize}
@@ -55,3 +57,35 @@ The idea to realize AudioCLIP is very simple: in addition to the text-image cont
     \includegraphics[width=0.8\textwidth]{img/AudioCLIP.png}
     \caption{Conceptual representation of AudioCLIP architecture}
 \end{figure}
+
+
+
+
+\subsection{Contrastive Learning arcitetures in Multimodal Recommender Systems}
+CLIP and AudioCLIP were born, and mainly used, for classification tasks. However, their ability to create a shared feature space for different modalities makes them suitable for multimodal recommender systems as well.
+\subsubsection{CLIP in Multimodal Recommender Systems}
+Zixuan Yi et al. \cite{CLIPRecSys} analyzed the use of CLIP in multimodal recommender systems. Up to few years ago, multimodal features were extracted using pretrained models on a single modality, such as ResNet for images and BERT for text. This leads to a problem: the features extracted from different modalities are not aligned in the same feature space. To solve this problem, they proposed to use CLIP to extract aligned image and text features. In particular, they used both a frozen and a fine-tuned CLIP model to extract image and text features. Experiments involved five multimodal recommender systems: VBPR, MMGCN, MMGCL , SLMRec  and LATTICE and showed that both frozen and fine-tuned CLIP features significantly outperformed the traditional pretrained features in four out of five models. To be more specific, due to it's learning objective, LATTICE perform better without CLIP features. The fine-tune algorithm proposed by the authors is known as \textbf{END-TO-END Training}.
+\paragraph{End-To-End Training}
+The end-to-end fine-tuning procedure integrates the CLIP encoder directly into the recommendation model and jointly optimizes both components using recommendation losses. The training steps are as follows:
+
+\begin{enumerate}
+    \item \textbf{Load Data:} Prepare the dataset by loading raw data
+    
+    \item \textbf{Initialize CLIP Encoder:} Load a pre-trained CLIP model and its corresponding weights.
+    
+    \item \textbf{Generate Embeddings:} Use the CLIP encoder to extract image embeddings and text embeddings from the dataset:
+    
+    \item \textbf{Integrate Embeddings:} Feed the extracted embeddings into the recommendation model as initial item representations.
+    
+    \item \textbf{Joint Optimisation:} For each training epoch, jointly update both the CLIP encoder and the recommendation model:
+    \begin{enumerate}
+        \item Perform a forward pass to compute user--item scores.
+        \item Compute the recommendation loss 
+        \item Backpropagate the loss and update both the CLIP encoder and recommendation model parameters:
+    \end{enumerate}
+    \item \textbf{Evaluation:} After each epoch, evaluate and log recommendation performance metrics (e.g., NDCG, Recall) to monitor progress.
+\end{enumerate}
+
+This end-to-end strategy allows the CLIP encoder to adapt its visual and textual representations specifically to the recommendation task, leading to improved alignment between modalities and better overall recommendation performance.
+\subsubsection{AudioCLIP in Multimodal Recommender Systems}
+In literature there are evidence of the use of AudioCLIP in multimodal recommender systems.
