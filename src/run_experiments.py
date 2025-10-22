@@ -25,9 +25,10 @@ def main():
             }
         },"""
     # Configurazioni degli esperimenti
-    experiments = [
-
+    
+    """
         {
+            
             'name': 'VBPR_text_minilm',
             'model': 'VBPR',
             'dataset': 'movielens_1m',
@@ -102,6 +103,19 @@ def main():
                 'vision_feature_file': 'image_audioclip.npy',
                 'text_feature_file': 'text_audioclip.npy',
                 'audio_feature_file': 'audio_audioclip.npy',
+            }
+        },
+        """
+    experiments = [
+        {
+            'name': 'VBPR_text_clip_image_clip_audio_vggish',
+            'model': 'VBPR',
+            'dataset': 'movielens_1m',
+            'config': {
+                'gpu_id': 0,
+                'vision_feature_file': 'image_clip.npy',
+                'text_feature_file': 'text_clip.npy',
+                'audio_feature_file': 'audio_vggish.npy',
             }
         },
     ]
