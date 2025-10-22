@@ -5,6 +5,7 @@ import os
 import numpy as np
 import torch
 import torch.nn as nn
+from logging import getLogger
 
 
 class AbstractRecommender(nn.Module):
@@ -87,21 +88,65 @@ class GeneralRecommender(AbstractRecommender):
         self.device = config['device']
 
         # load encoded features here
+        self.logger = getLogger()
         self.v_feat, self.t_feat, self.a_feat = None, None, None
         if not config['end2end'] and config['is_multimodal_model']:
             dataset_path = os.path.abspath(config['data_path'] + config['dataset'])
-            # if file exist?
-            v_feat_file_path = os.path.join(dataset_path, config['vision_feature_file'])
-            t_feat_file_path = os.path.join(dataset_path, config['text_feature_file'])
-            a_feat_file_path = os.path.join(dataset_path, config['audio_feature_file'])
-            if os.path.isfile(v_feat_file_path):
-                self.v_feat = torch.from_numpy(np.load(v_feat_file_path, allow_pickle=True)).type(torch.FloatTensor).to(
-                    self.device)
-            if os.path.isfile(t_feat_file_path):
-                self.t_feat = torch.from_numpy(np.load(t_feat_file_path, allow_pickle=True)).type(torch.FloatTensor).to(
-                    self.device)
-            if os.path.isfile(a_feat_file_path):
-                self.a_feat = torch.from_numpy(np.load(a_feat_file_path, allow_pickle=True)).type(torch.FloatTensor).to(
-                    self.device)
+            
+            self.logger.info("\n" + "="*80)
+            self.logger.info("CARICAMENTO FEATURE MULTIMODALI")
+            self.logger.info("="*80)
+            
+            # Vision features
+            if config['vision_feature_file'] is not None:
+                v_feat_file_path = os.path.join(dataset_path, config['vision_feature_file'])
+                if os.path.isfile(v_feat_file_path):
+                    self.v_feat = torch.from_numpy(np.load(v_feat_file_path, allow_pickle=True)).type(torch.FloatTensor).to(
+                        self.device)
+                    self.logger.info(f"✓ Vision features caricate: {config['vision_feature_file']} - Shape: {self.v_feat.shape}")
+                else:
+                    self.logger.warning(f"✗ Vision features NON trovate: {v_feat_file_path}")
+            else:
+                self.logger.info("○ Vision features: NON richieste (None)")
+            
+            # Text features
+            if config['text_feature_file'] is not None:
+                t_feat_file_path = os.path.join(dataset_path, config['text_feature_file'])
+                if os.path.isfile(t_feat_file_path):
+                    self.t_feat = torch.from_numpy(np.load(t_feat_file_path, allow_pickle=True)).type(torch.FloatTensor).to(
+                        self.device)
+                    self.logger.info(f"✓ Text features caricate: {config['text_feature_file']} - Shape: {self.t_feat.shape}")
+                else:
+                    self.logger.warning(f"✗ Text features NON trovate: {t_feat_file_path}")
+            else:
+                self.logger.info("○ Text features: NON richieste (None)")
+            
+            # Audio features
+            if config['audio_feature_file'] is not None:
+                a_feat_file_path = os.path.join(dataset_path, config['audio_feature_file'])
+                if os.path.isfile(a_feat_file_path):
+                    self.a_feat = torch.from_numpy(np.load(a_feat_file_path, allow_pickle=True)).type(torch.FloatTensor).to(
+                        self.device)
+                    self.logger.info(f"✓ Audio features caricate: {config['audio_feature_file']} - Shape: {self.a_feat.shape}")
+                else:
+                    self.logger.warning(f"✗ Audio features NON trovate: {a_feat_file_path}")
+            else:
+                self.logger.info("○ Audio features: NON richieste (None)")
+            
+            # Riepilogo
+            loaded_features = []
+            if self.v_feat is not None:
+                loaded_features.append("Vision")
+            if self.t_feat is not None:
+                loaded_features.append("Text")
+            if self.a_feat is not None:
+                loaded_features.append("Audio")
+            
+            if loaded_features:
+                self.logger.info(f"\n✓ Feature caricate con successo: {', '.join(loaded_features)}")
+            else:
+                self.logger.error("✗ ERRORE: Nessuna feature caricata!")
+            
+            self.logger.info("="*80 + "\n")
 
             assert self.v_feat is not None or self.t_feat is not None or self.a_feat is not None, 'Features all NONE'

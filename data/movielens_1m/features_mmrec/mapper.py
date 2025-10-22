@@ -1,5 +1,10 @@
 import pandas as pd
 import numpy as np
+import os
+
+# Directory di output: parent della directory corrente
+OUTPUT_DIR = os.path.dirname(os.getcwd())
+print(f"Directory output: {OUTPUT_DIR}\n")
 
 # ============================================
 # STEP 1: Carica il file .inter
@@ -17,20 +22,53 @@ item_mapping = pd.read_csv('item_features.csv')
 print(f"\nMappatura caricata: {len(item_mapping)} items")
 
 # ============================================
-# STEP 3: Carica i file .npy - AUDIO, IMMAGINI, TESTO
+# STEP 3: Carica TUTTI i file .npy degli embeddings
 # ============================================
-audio_features = np.load('audios.npy')
-image_features = np.load('images.npy')
-text_features = np.load('texts.npy')
+# Definisci tutti i file da caricare con nomi descrittivi
+embedding_files = {
+    # AudioCLIP (3 modalità)
+    'image_audioclip': 'image_audioclip.npy',
+    'audio_audioclip': 'audio_audioclip.npy',
+    'text_audioclip': 'text_audioclip.npy',
+    
+    # CLIP (2 modalità)
+    'image_clip': 'image_clip.npy',
+    'text_clip': 'text_clip.npy',
+    
+    # MiniLM (1 modalità)
+    'text_minilm': 'text_minilm.npy',
+    
+    # Whisper (1 modalità)
+    'audio_vggish': 'audio_vggish.npy',
+    
+    # ViT (1 modalità)
+    'image_vit': 'image_vit.npy',
+}
 
-print(f"\nDimensioni features:")
-print(f"  - Audio: {audio_features.shape}")
-print(f"  - Immagini: {image_features.shape}")
-print(f"  - Testo: {text_features.shape}")
+# Carica tutti i file disponibili
+embeddings = {}
+num_items = None
 
-# Verifica che tutti gli array abbiano lo stesso numero di item
-assert audio_features.shape[0] == image_features.shape[0] == text_features.shape[0], \
-    "I file .npy hanno dimensioni diverse!"
+print(f"\nCaricamento embeddings:")
+for name, filename in embedding_files.items():
+    try:
+        embeddings[name] = np.load(filename)
+        print(f"  ✓ {name:20s}: {embeddings[name].shape}")
+        
+        # Verifica coerenza del numero di item
+        if num_items is None:
+            num_items = embeddings[name].shape[0]
+        else:
+            assert embeddings[name].shape[0] == num_items, \
+                f"Errore: {filename} ha {embeddings[name].shape[0]} item, atteso {num_items}!"
+    except FileNotFoundError:
+        print(f"  ⚠ {name:20s}: file non trovato, skip")
+
+# Verifica che almeno un file sia stato caricato
+if not embeddings:
+    raise FileNotFoundError("Nessun file di embedding trovato!")
+
+print(f"\n✓ Caricati {len(embeddings)} tipi di embeddings, tutti con {num_items} item")
 
 # Tutti gli item nella mappatura hanno le 3 modalità
 valid_items = set(item_mapping['item_id'])
@@ -113,77 +151,75 @@ else:
     final_df.columns = ['userID', 'itemID', 'rating', 'timestamp']
 
 # ============================================
-# STEP 7: Salva il nuovo file .inter
+# STEP 7: Salva il nuovo file .inter nella directory parent
 # ============================================
-final_df.to_csv('movielens_1m_filtered.inter', sep='\t', index=False)
-print(f"\n✓ Salvato: movielens_1m_filtered.inter")
+inter_output_path = os.path.join(OUTPUT_DIR, 'movielens_1m.inter')
+final_df.to_csv(inter_output_path, sep='\t', index=False)
+print(f"\n✓ Salvato: {inter_output_path}")
 
 # ============================================
-# STEP 8: Ricostruisci i file .npy - AUDIO, IMMAGINI, TESTO
+# STEP 8: Ricostruisci TUTTI i file .npy
 # ============================================
 print(f"\nRicostruzione file .npy...")
 
 # Crea la mappatura: vecchio_idx -> item_id
 old_idx_to_item = dict(zip(item_mapping['idx'], item_mapping['item_id']))
 
-# Liste per i nuovi array
-new_audio = []
-new_image = []
-new_text = []
+# Dizionario per i nuovi embedding array
+new_embeddings = {name: [] for name in embeddings.keys()}
 
-# Per ogni nuovo indice (0 to n-1), trova il vecchio idx e recupera il feature vector
+# Per ogni nuovo indice (0 to n-1), trova il vecchio idx e recupera i feature vectors
 for new_idx in range(len(inverse_map_item)):
     old_item_id = inverse_map_item[new_idx]
     
     # Trova il vecchio idx nel file .npy originale
     old_idx = item_mapping[item_mapping['item_id'] == old_item_id]['idx'].values[0]
     
-    # Recupera i feature vectors
-    new_audio.append(audio_features[old_idx])
-    new_image.append(image_features[old_idx])
-    new_text.append(text_features[old_idx])
+    # Recupera i feature vectors per tutti i tipi di embedding
+    for name in embeddings.keys():
+        new_embeddings[name].append(embeddings[name][old_idx])
 
-# Converti in numpy array
-new_audio_array = np.array(new_audio)
-new_image_array = np.array(new_image)
-new_text_array = np.array(new_text)
+# Converti in numpy array e salva nella directory parent
+print(f"\nSalvataggio nuovi file embeddings nella directory parent:")
+for name in embeddings.keys():
+    new_array = np.array(new_embeddings[name])
+    output_filename = f"{name}.npy"  # Nome senza _filtered
+    output_path = os.path.join(OUTPUT_DIR, output_filename)
+    np.save(output_path, new_array)
+    print(f"  ✓ {output_filename:30s}: {new_array.shape}")
 
-print(f"  - Nuove dimensioni Audio: {new_audio_array.shape}")
-print(f"  - Nuove dimensioni Immagini: {new_image_array.shape}")
-print(f"  - Nuove dimensioni Testo: {new_text_array.shape}")
-
-# Salva i nuovi file .npy
-np.save('audio_filtered.npy', new_audio_array)
-np.save('image_filtered.npy', new_image_array)
-np.save('text_filtered.npy', new_text_array)
-
-print(f"\n✓ Salvati: audio_filtered.npy, image_filtered.npy, text_filtered.npy")
+print(f"\n✓ Tutti gli embeddings sono stati rimappati e salvati")
 
 # ============================================
-# STEP 9: Salva le nuove mappature
+# STEP 9: Salva le nuove mappature nella directory parent
 # ============================================
-# Mappatura user
-user_mapping_df = pd.DataFrame([
-    {'old_userID': old_id, 'new_userID': new_id} 
-    for old_id, new_id in map_user.items()
-])
-user_mapping_df.to_csv('user_mapping.csv', index=False)
-
-# Mappatura item
-item_mapping_df = pd.DataFrame([
-    {'old_itemID': old_id, 'new_itemID': new_id} 
-    for old_id, new_id in map_item.items()
-])
-item_mapping_df.to_csv('item_mapping.csv', index=False)
-
-# Nuova mappatura item_id -> idx
+# Mappatura item_id -> idx (nella parent - usata per caricare embeddings)
 new_item_features = pd.DataFrame([
     {'item_id': old_id, 'idx': new_id} 
     for old_id, new_id in map_item.items()
 ])
-new_item_features.to_csv('item_features_filtered.csv', index=False)
+item_features_path = os.path.join(OUTPUT_DIR, 'item_features.csv')
+new_item_features.to_csv(item_features_path, index=False)
 
-print(f"\n✓ Salvati: user_mapping.csv, item_mapping.csv, item_features_filtered.csv")
+# Mappature di reference (anche queste nella parent per non sovrascrivere nulla)
+user_mapping_df = pd.DataFrame([
+    {'old_userID': old_id, 'new_userID': new_id} 
+    for old_id, new_id in map_user.items()
+])
+user_mapping_path = os.path.join(OUTPUT_DIR, 'user_mapping.csv')
+user_mapping_df.to_csv(user_mapping_path, index=False)
+
+item_mapping_df = pd.DataFrame([
+    {'old_itemID': old_id, 'new_itemID': new_id} 
+    for old_id, new_id in map_item.items()
+])
+item_mapping_path = os.path.join(OUTPUT_DIR, 'item_mapping.csv')
+item_mapping_df.to_csv(item_mapping_path, index=False)
+
+print(f"\n✓ Salvati nella parent:")
+print(f"  - item_features.csv")
+print(f"  - user_mapping.csv") 
+print(f"  - item_mapping.csv")
 
 # ============================================
 # STEP 10: Statistiche finali
@@ -194,13 +230,17 @@ print(f"{'='*60}")
 print(f"Interazioni: {len(final_df)}")
 print(f"Users: {final_df['userID'].nunique()} (da 0 a {final_df['userID'].max()})")
 print(f"Items: {final_df['itemID'].nunique()} (da 0 a {final_df['itemID'].max()})")
-print(f"\nModalità: AUDIO + IMMAGINI + TESTO")
-print(f"\nFile generati:")
-print(f"  - movielens_1m_filtered.inter")
-print(f"  - audio_filtered.npy")
-print(f"  - image_filtered.npy")
-print(f"  - text_filtered.npy")
-print(f"  - user_mapping.csv")
-print(f"  - item_mapping.csv")
-print(f"  - item_features_filtered.csv")
+
+print(f"\n📁 File salvati nella parent directory ({OUTPUT_DIR}):")
+print(f"  Dataset:")
+print(f"    - movielens_1m.inter (per training)")
+print(f"  Mappature:")
+print(f"    - item_features.csv (item_id -> idx)")
+print(f"    - user_mapping.csv (old -> new user IDs)")
+print(f"    - item_mapping.csv (old -> new item IDs)")
+print(f"  Embeddings:")
+for name in embeddings.keys():
+    print(f"    - {name}.npy")
+print(f"{'='*60}")
+print(f"\n✓ Nessun file sovrascritto nella directory corrente (features_mmrec)")
 print(f"{'='*60}")

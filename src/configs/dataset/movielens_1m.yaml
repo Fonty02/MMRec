@@ -8,10 +8,10 @@ filter_out_cod_start_users: True
 
 inter_file_name: 'movielens_1m.inter'
 
-# name of features
-vision_feature_file: 'image_filtered.npy'
-text_feature_file: 'text_filtered.npy'
-audio_feature_file: 'audio_filtered.npy'
+# Feature files - possono essere sovrascritti da config_dict in run.py
+vision_feature_file: 'image_vit.npy'
+text_feature_file: 'text_minilm.npy'
+audio_feature_file: 'audio_vggish.npy'
 user_graph_dict_file: 'user_graph_dict.npy'
 
 field_separator: "\t"

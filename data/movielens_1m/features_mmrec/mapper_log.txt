@@ -1,0 +1,87 @@
+Directory output: /home/fonty/Semantic/MMRec/data/movielens_1m
+
+Dataset originale:
+  - Interazioni: 942703
+  - Users: 6040
+  - Items: 2980
+
+Mappatura caricata: 3095 items
+
+Caricamento embeddings:
+  ✓ image_audioclip     : (3095, 1024)
+  ✓ audio_audioclip     : (3095, 1024)
+  ✓ text_audioclip      : (3095, 1024)
+  ✓ image_clip          : (3095, 512)
+  ✓ text_clip           : (3095, 512)
+  ✓ text_minilm         : (3095, 384)
+  ✓ audio_vggish        : (3095, 128)
+  ✓ image_vit           : (3095, 768)
+
+✓ Caricati 8 tipi di embeddings, tutti con 3095 item
+
+Item con tutte e 3 le modalità (audio, immagini, testo): 3095
+
+Dopo filtro multimodale:
+  - Interazioni: 732442
+  - Users: 6040
+  - Items: 2341
+
+Applicazione 5-core filtering...
+  Iterazione 1: 732442 interazioni, 6040 users, 2341 items
+
+Dopo 5-core filtering:
+  - Interazioni: 732442
+  - Users: 6040
+  - Items: 2341
+
+User remapping: 0 to 6039
+Item remapping: 0 to 2340
+
+✓ Salvato: /home/fonty/Semantic/MMRec/data/movielens_1m/movielens_1m.inter
+
+Ricostruzione file .npy...
+
+Salvataggio nuovi file embeddings nella directory parent:
+  ✓ image_audioclip.npy           : (2341, 1024)
+  ✓ audio_audioclip.npy           : (2341, 1024)
+  ✓ text_audioclip.npy            : (2341, 1024)
+  ✓ image_clip.npy                : (2341, 512)
+  ✓ text_clip.npy                 : (2341, 512)
+  ✓ text_minilm.npy               : (2341, 384)
+  ✓ audio_vggish.npy              : (2341, 128)
+  ✓ image_vit.npy                 : (2341, 768)
+
+✓ Tutti gli embeddings sono stati rimappati e salvati
+
+✓ Salvati nella parent:
+  - item_features.csv
+  - user_mapping.csv
+  - item_mapping.csv
+
+============================================================
+STATISTICHE FINALI
+============================================================
+Interazioni: 732442
+Users: 6040 (da 0 a 6039)
+Items: 2341 (da 0 a 2340)
+
+📁 File salvati nella parent directory (/home/fonty/Semantic/MMRec/data/movielens_1m):
+  Dataset:
+    - movielens_1m.inter (per training)
+  Mappature:
+    - item_features.csv (item_id -> idx)
+    - user_mapping.csv (old -> new user IDs)
+    - item_mapping.csv (old -> new item IDs)
+  Embeddings:
+    - image_audioclip.npy
+    - audio_audioclip.npy
+    - text_audioclip.npy
+    - image_clip.npy
+    - text_clip.npy
+    - text_minilm.npy
+    - audio_vggish.npy
+    - image_vit.npy
+============================================================
+
+✓ Nessun file sovrascritto nella directory corrente (features_mmrec)
+============================================================
