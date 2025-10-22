@@ -29,3 +29,5 @@
 \contentsline {paragraph}{Step 6: Output Files}{14}{}%
 \contentsline {section}{\numberline {4}Experiments}{15}{}%
 \contentsline {subsection}{\numberline {4.1}MovieLens\_1M}{15}{}%
+\contentsline {paragraph}{Feature extractors used}{15}{}%
+\contentsline {subsection}{\numberline {4.2}Conclusions}{16}{}%
