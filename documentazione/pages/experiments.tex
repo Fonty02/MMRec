@@ -1,21 +1,126 @@
 \section{Experiments}
 \subsection{MovieLens\_1M}
-Here we can find a comparison between the best result of the baseline \cite{Spillong} and the best result of our modalities.
+Here we can find a comparison between different models.
+
+% Recall table (TEST metrics for BPR)
 \begin{table}[H]
     \centering
     \begin{adjustbox}{max width=\textwidth}
-    \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+    \begin{tabular}{|c|c|c|c|c|c|}
         \hline
-        \textbf{Model} & \textbf{Modality} & \textbf{rec@10} & \textbf{prec@10} & \textbf{ndcg@10} & \textbf{map@10} & \textbf{rec@20} & \textbf{prec@20} & \textbf{ndcg@20} & \textbf{map@20} \\
+        	extbf{Model} & \textbf{Modality} & \textbf{rec@5} & \textbf{rec10} & \textbf{rec@20} & \textbf{rec@50}\\
         \hline
-        VBPR & Text (baseline) & 0.132 & \textbf{0.1624} & \textbf{0.1975} & \textbf{0.0982} & 0.2123 & \textbf{0.1358} & 0.2127 & \textbf{0.1358} \\
+        BPR & None & 0.1089 & 0.1776 & 0.2743 & 0.4499 \\
         \hline
-        VBPR & Text+Audio (baseline) & 0.1265 & 0.1524(text+video) & 0.1849 & 0.0905 & 0.2052 & 0.129(text+video) & 0.2011 & 0.0845 \\
+        VBPR & Text & 0.1144 & 0.1877 & 0.2939 & 0.4678 \\
         \hline
-        VBPR & Text+Image+Audio & \textbf{0.1570} & 0.1476 & 0.1922 & 0.0969 & \textbf{0.2466} & 0.1225 & \textbf{0.2147} & 0.0957 \\
+        VBPR & Audio & 0.1147 & 0.1876 & 0.2913 & 0.4675 \\
+        \hline
+        VBPR & Image & 0.1148 & 0.1881 & 0.2913 & 0.4654 \\
+        \hline
+        VBPR & Text+Image (disaligned) & 0.1139 & 0.1895 & 0.2904 & 0.4646 \\
+        \hline
+    VBPR & Text+Image (CLIP) & 0.1152 & \textbf{0.1911} & \textbf{0.2942} & \textbf{0.4681} \\
+        \hline
+    VBPR & Text+Audio+Image (disaligned) & \textbf{0.1163} & 0.1876 & 0.2926 & 0.4672 \\
+        \hline
+        VBPR & Text+Audio+Image (AudioCLIP) & 0.0940 & 0.1570 & 0.2466 & 0.4176 \\
         \hline
     \end{tabular}
     \end{adjustbox}
-    \caption{Comparison between baseline and our multimodal approach on MovieLens-1M}
-    \label{tab:vbpr_movielens_comparison}
+    \caption{Recall Metrics (test)}
+    \label{tab:recall_movielens_comparison}
 \end{table}
+
+
+\begin{table}[H]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        	extbf{Model} & \textbf{Modality} & \textbf{prec@5} & \textbf{prec10} & \textbf{prec@20} & \textbf{prec@50}\\
+        \hline
+        BPR & None & 0.1898 & 0.1631 & 0.1341 & 0.0954 \\
+        \hline
+        VBPR & Text & 0.1999 & 0.1713 & 0.1425 & 0.1001 \\
+        \hline
+    VBPR & Audio & \textbf{0.2015} & 0.1722 & \textbf{0.1432} & \textbf{0.1006} \\
+        \hline
+        VBPR & Image & 0.1985 & 0.1720 & 0.1424 & 0.1002 \\
+        \hline
+        VBPR & Text+Image (disaligned) & 0.1972 & 0.1725 & 0.1422 & 0.0999 \\
+        \hline
+    VBPR & Text+Image (CLIP) & 0.1997 & \textbf{0.1745} & 0.1424 & 0.1001 \\
+        \hline
+        VBPR & Text+Audio+Image (disaligned) & 0.1986 & 0.1718 & 0.1426 & 0.1001 \\
+        \hline
+        VBPR & Text+Audio+Image (AudioCLIP) & 0.1694 & 0.1476 & 0.1225 & 0.0892 \\
+        \hline
+    \end{tabular}
+    \end{adjustbox}
+    \caption{Precision Metrics (test)}
+    \label{tab:precision_movielens_comparison}
+\end{table}
+
+% NDCG table (TEST metrics for BPR)
+\begin{table}[H]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        	extbf{Model} & \textbf{Modality} & \textbf{ndcg@5} & \textbf{ndcg@10} & \textbf{ndcg@20} & \textbf{ndcg@50} \\
+        \hline
+        BPR & None & 0.2096 & 0.2159 & 0.2400 & 0.2991 \\
+        \hline
+        VBPR & Text & 0.2196 & 0.2269 & 0.2544 & 0.3131 \\
+        \hline
+    VBPR & Audio & \textbf{0.2217} & 0.2278 & 0.2543 & 0.3132 \\
+        \hline
+        VBPR & Image & 0.2193 & 0.2280 & 0.2543 & 0.3131 \\
+        \hline
+        VBPR & Text+Image (disaligned) & 0.2179 & 0.2279 & 0.2534 & 0.3119 \\
+        \hline
+    VBPR & Text+Image (CLIP) & 0.2205 & \textbf{0.2300} & \textbf{0.2554} & \textbf{0.3141} \\
+        \hline
+        VBPR & Text+Audio+Image (disaligned) & 0.2191 & 0.2271 & 0.2542 & 0.3129 \\
+        \hline
+        VBPR & Text+Audio+Image (AudioCLIP) & 0.1857 & 0.1922 & 0.2147 & 0.2721 \\
+        \hline
+    \end{tabular}
+    \end{adjustbox}
+    \caption{NDCG Metrics (test)}
+    \label{tab:ndcg_movielens_comparison}
+\end{table}
+
+% MAP table (TEST metrics for BPR)
+\begin{table}[H]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{|c|c|c|c|c|c|}
+        \hline
+        	extbf{Model} & \textbf{Modality} & \textbf{map@5} & \textbf{map@10} & \textbf{map@20} & \textbf{map@50} \\
+        \hline
+        BPR & None & 0.1289 & 0.1120 & 0.1112 & 0.1250 \\
+        \hline
+        VBPR & Text & 0.1363 & 0.1192 & 0.1195 & 0.1339 \\
+        \hline
+        VBPR & Audio & 0.1374 & 0.1194 & 0.1193 & 0.1335 \\
+        \hline
+        VBPR & Image & 0.1356 & 0.1200 & 0.1200 & 0.1344 \\
+        \hline
+        VBPR & Text+Image (disaligned) & 0.1353 & 0.1199 & 0.1194 & 0.1335 \\
+        \hline
+    VBPR & Text+Image (CLIP) & \textbf{0.1376} & \textbf{0.1211} & \textbf{0.1204} & \textbf{0.1347} \\
+        \hline
+        VBPR & Text+Audio+Image (disaligned) & 0.1356 & 0.1195 & 0.1196 & 0.1339 \\
+        \hline
+        VBPR & Text+Audio+Image (AudioCLIP) & 0.1125 & 0.0969 & 0.0957 & 0.1082 \\
+        \hline
+    \end{tabular}
+    \end{adjustbox}
+    \caption{MAP Metrics (test)}
+    \label{tab:map_movielens_comparison}
+\end{table}
+
+
+
