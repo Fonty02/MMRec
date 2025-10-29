@@ -15,23 +15,20 @@ def main():
     1. BPR - baseline senza feature
     2-8. VBPR con diverse combinazioni di feature multimodali
     """
-    """
+    experiments = [
             {
             'name': 'BPR_baseline',
             'model': 'BPR',
-            'dataset': 'movielens_1m',
+            'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
             }
-        },"""
-    # Configurazioni degli esperimenti
-    
-    """
+        },
         {
             
             'name': 'VBPR_text_minilm',
             'model': 'VBPR',
-            'dataset': 'movielens_1m',
+            'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
                 'vision_feature_file': None,  # Non usare visual
@@ -39,21 +36,21 @@ def main():
                 'audio_feature_file': None,  # Non usare audio
             }
         },
-        {
-            'name': 'VBPR_audio_vggish',
-            'model': 'VBPR',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': None,
-                'text_feature_file': None,
-                'audio_feature_file': 'audio_vggish.npy',
-            }
-        },
+       # {
+           # 'name': 'VBPR_audio_vggish',
+           # 'model': 'VBPR',
+           # 'dataset': 'lastfm',
+           # 'config': {
+            #    'gpu_id': 0,
+             #   'vision_feature_file': None,
+             #   'text_feature_file': None,
+             #   'audio_feature_file': 'audio_vggish.npy',
+           # }
+       # },
         {
             'name': 'VBPR_image_vit',
             'model': 'VBPR',
-            'dataset': 'movielens_1m',
+            'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
                 'vision_feature_file': 'image_vit.npy',
@@ -64,7 +61,7 @@ def main():
         {
             'name': 'VBPR_text_minilm_image_vit',
             'model': 'VBPR',
-            'dataset': 'movielens_1m',
+            'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
                 'vision_feature_file': 'image_vit.npy',
@@ -75,7 +72,7 @@ def main():
         {
             'name': 'VBPR_text_clip_image_clip',
             'model': 'VBPR',
-            'dataset': 'movielens_1m',
+            'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
                 'vision_feature_file': 'image_clip.npy',
@@ -83,21 +80,21 @@ def main():
                 'audio_feature_file': None,
             }
         },
-        {
-            'name': 'VBPR_text_minilm_image_vit_audio_vggish',
-            'model': 'VBPR',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_vit.npy',
-                'text_feature_file': 'text_minilm.npy',
-                'audio_feature_file': 'audio_vggish.npy',
-            }
-        },
+      #  {
+        #    'name': 'VBPR_text_minilm_image_vit_audio_vggish',
+        #    'model': 'VBPR',
+        #    'dataset': 'lastfm',
+        #    'config': {
+         #       'gpu_id': 0,
+          #      'vision_feature_file': 'image_vit.npy',
+          #      'text_feature_file': 'text_minilm.npy',
+          #      'audio_feature_file': 'audio_vggish.npy',
+         #   }
+       # },
         {
             'name': 'VBPR_audioclip_full',
             'model': 'VBPR',
-            'dataset': 'movielens_1m',
+            'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
                 'vision_feature_file': 'image_audioclip.npy',
@@ -105,20 +102,8 @@ def main():
                 'audio_feature_file': 'audio_audioclip.npy',
             }
         },
-        """
-    experiments = [
-        {
-            'name': 'VBPR_text_clip_image_clip_audio_vggish',
-            'model': 'VBPR',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_clip.npy',
-                'text_feature_file': 'text_clip.npy',
-                'audio_feature_file': 'audio_vggish.npy',
-            }
-        },
     ]
+
     
     total_experiments = len(experiments)
     

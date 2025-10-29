@@ -162,4 +162,178 @@ The script generates the following files:
     \item \texttt{item\_features\_filtered.csv}: updated item-to-index mapping
 \end{itemize}
 
+    % -----------------------------------------------------------------------------
+    \subsection{Multimodal extraction and preprocessing pipeline}
+
+    This subsection documents the end-to-end pipeline used to extract aligned multimodal
+    embeddings (images, audio and text) and the subsequent remapping of interaction
+    datasets to match the extracted features. The description below follows the
+    implementation contained in the repository (notably: \texttt{extract_embeddings.py}
+    and the two mapper scripts in \texttt{data/*/*/mapper.py}).
+
+    \subsubsection{Overview}
+
+    The pipeline performs these high-level tasks in order:
+    \begin{enumerate}
+        \item Discover raw modality files (images, audios, texts) and match them by basename.
+        \item Validate and filter corrupted files (audio validation uses librosa or VGGish helpers).
+        \item Extract per-modality embeddings using AudioCLIP (aligned image/audio/text),
+        CLIP, MiniLM, VGGish and ViT; batch and GPU inference are used when available.
+        \item Enforce strict alignment: keep only items successfully extracted in all modalities.
+        \item Save per-modality NumPy arrays and an \texttt{item\_features.csv} mapping row $\leftrightarrow$ item id.
+        \item Filter and remap interaction datasets (5-core filtering, contiguous ID remapping), then reconstruct
+        embeddings arrays to match the new item indices.
+    \end{enumerate}
+
+    \subsubsection{File discovery and alignment}
+
+    The extractor scans the three raw-data folders provided on the command line and builds
+    maps from basename to absolute paths: \texttt{img\_names}, \texttt{aud\_names}, \texttt{txt\_names}.
+    Only basenames present in all three maps (the intersection) are considered candidates
+    for full multimodal extraction. This ensures row-wise correspondence between modalities.
+
+    If the intersection is empty the script aborts. If some files are found corrupted during
+    modality-specific processing, those items are removed from the final set and the arrays
+    are rebuilt to keep identical order across modalities.
+
+    \subsubsection{Audio validation}
+
+    Audio files are validated before heavy processing. Two modes are available:
+    \begin{itemize}
+        \item \textbf{quick}: use \texttt{librosa.load} to detect unreadable files.
+        \item \textbf{vggish}: use \texttt{vggish\_input.wavfile\_to\_examples} for stricter checks.
+    \end{itemize}
+
+    Invalid audio files are logged and excluded; exclusion is global (the corresponding
+    image/text files are also removed to preserve alignment).
+
+    \subsubsection{Per-modality extraction details}
+
+    \paragraph{Images}
+    Images are preprocessed to the resolution expected by the model (usually 224×224),
+    normalized with CLIP statistics and processed in batches. ViT and CLIP image encoders
+    are both available; the AudioCLIP repository provides an image encoder aligned with
+    the text/audio encoders.
+
+    \paragraph{Audio}
+    Audio encoding uses a sliding window strategy (default: 2.0s window, 1.0s stride).
+    Each window is encoded individually; the per-file embedding is the mean of window embeddings.
+    Large numbers of windows are batched to accelerate GPU inference.
+
+    \paragraph{Text}
+    Text tokenization follows CLIP limits (typically 77 tokens). Longer texts are split
+    into chunks (sentence-aware when possible) and chunk embeddings are averaged to
+    produce a single per-item embedding.
+
+    \paragraph{Other models}
+    MiniLM is used for an additional textual embedding, VGGish for an alternative audio
+    representation and ViT for an alternative image representation. CLIP is used to
+    produce image and text embeddings aligned in the CLIP space.
+
+    \subsubsection{Consistency enforcement}
+
+    After extraction each modality produces a NumPy array of shape $(N, D_{m})$ where
+    $N$ is the number of successfully processed items and $D_{m}$ the modality-specific
+    embedding dimensionality. The extractor enforces $N$ to be identical across modalities
+    by taking the intersection of successful item basenames. The final arrays are saved
+    in the same order and \texttt{item\_features.csv} contains the mapping from item id
+    to row index.
+
+    % -----------------------------------------------------------------------------
+    \subsection{Interaction filtering and remapping (mappers)}
+
+    Two mapper scripts are provided: one for MovieLens (item-level mapping) and one for
+    LastFM (artist-level interactions mapped to multiple item variants). Both follow the
+    same core logic with dataset-specific differences.
+
+    \subsubsection{Core steps}
+
+    \begin{enumerate}
+        \item Load the original interaction file (tab-separated) and the current \texttt{item\_features.csv}.
+        \item Load available embedding \texttt{.npy} files (the mapper tolerates missing modalities but warns).
+        \item Filter interactions to include only items (or artists) present in \texttt{item\_features.csv}.
+        \item Apply iterative 5-core filtering (remove users/items with fewer than 5 interactions until convergence).
+        \item Build contiguous remappings: users 0..(m-1), items 0..(n-1). For LastFM expand
+        artist-level interactions into per-variant item rows when necessary.
+        \item Save the remapped interaction file and write new \texttt{item\_features.csv},
+        	exttt{user\_mapping.csv} and \texttt{item\_mapping.csv} into the parent directory.
+        \item Reconstruct per-modality \texttt{.npy} arrays ordered by the new item indices and save them in the parent directory.
+    \end{enumerate}
+
+    \subsubsection{LastFM special handling}
+
+    LastFM interactions are originally artist-level while extracted features are per-track
+    or per-variant. The mapper resolves this mismatch by mapping each artist to all
+    available variants and expanding each user-artist interaction into multiple
+    user-item interactions (one per variant). This assumes the original rating applies
+    to all variants equally. The result is a larger interaction dataset and a new
+    set of item indices that reflect individual variants.
+
+    % -----------------------------------------------------------------------------
+    \subsection{Files produced (summary)}
+
+    After a successful run the following files are available in the output (or parent) directory:
+    \begin{itemize}
+        \item Per-modality embeddings (NumPy arrays):
+        \begin{itemize}
+            \item \texttt{image\_audioclip.npy}, \texttt{audio\_audioclip.npy}, \texttt{text\_audioclip.npy}
+            \item \texttt{image\_clip.npy}, \texttt{text\_clip.npy}
+            \item \texttt{text\_minilm.npy}
+            \item \texttt{audio\_vggish.npy}
+            \item \texttt{image\_vit.npy}
+        \end{itemize}
+        \item \texttt{item\_features.csv}: item identifier (basename or \{artist\}\_\{variant\}) \(\to\) row index
+        \item Remapped interaction file: \texttt{movielens\_1m.inter} or \texttt{lastfm.inter} (IDs contiguous from 0)
+        \item Mapping files: \texttt{user\_mapping.csv}, \texttt{item\_mapping.csv}
+    \end{itemize}
+
+    % -----------------------------------------------------------------------------
+    \subsection{How to run (examples)}
+
+    Run embedding extraction (example):
+    \begin{verbatim}
+    python3 extract_embeddings.py \
+      --images ../ml1m/_images \
+      --audios ../ml1m/_audios \
+      --texts ../ml1m/_texts \
+      --outdir ml1m_features \
+      --weights AudioCLIP-Full-Training.pt \
+      --device cuda \
+      --batch-size 512
+    \end{verbatim}
+
+    Run MovieLens mapper (from the features directory):
+    \begin{verbatim}
+    python3 mapper.py
+    \end{verbatim}
+
+    Run LastFM mapper (from the features directory):
+    \begin{verbatim}
+    python3 mapper.py
+    \end{verbatim}
+
+    % -----------------------------------------------------------------------------
+    \subsection{Verification and quick checks}
+
+    After running the full pipeline, perform these quick checks:
+    \begin{itemize}
+        \item Load per-modality arrays and assert identical number of rows:
+        	exttt{image.shape[0] == audio.shape[0] == text.shape[0]}
+        \item Check that \texttt{item\_features.csv} has the same number of rows and contains indices 0..(n-1).
+        \item Load the remapped `.inter` file and verify contiguous ID ranges:
+        	exttt{userID.min()==0}, \texttt{itemID.min()==0}. Also check max equals num\_unique-1.
+        \item For LastFM: pick a new item id and confirm the corresponding original variant and embedding were copied.
+    \end{itemize}
+
+    % -----------------------------------------------------------------------------
+    \subsection{Assumptions, limitations and recommended improvements}
+
+    \begin{itemize}
+        \item The extractor requires correctly named files with matching basenames across modalities.
+        \item The LastFM mapper expands artist-level ratings to per-variant items; if this is not desired,
+        consider aggregating variant embeddings per artist (mean or weighted mean) to obtain artist-level features.
+        \item Audio validation and sliding-window extraction are CPU/GPU intensive; choose batch sizes and number of workers accordingly.
+        \item Add a \texttt{--dry-run} flag to the mapper to preview final counts before writing heavy \texttt{.npy} files.
+        \item Add unit tests for the core-k filtering routine and for mapping consistency (round-trip checks).
+    \end{itemize}
 
