@@ -1,6 +1,9 @@
 \section{Experiments}
-\subsection{MovieLens\_1M}
+
+
 This section reports test-set results for several models and multimodal configurations. Tables are grouped by cutoff $k$: one table for @5, @10, @20 and @50. For each row we report Recall, Precision, NDCG and MAP at the corresponding cutoff.
+
+\subsection{MovieLens\_1M}
 
 % NOTE: default extractors
 \paragraph{Feature extractors used}
@@ -139,10 +142,112 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \label{tab:metrics_k50}
 \end{table}
 
-\subsection{Conclusions}
-The per-cutoff tables above show that multimodal VBPR variants improve over the BPR baseline on several metrics, but the relative gains depend on $k$ and on the exact modality combination. The newly added "CLIP+audio (disaligned)" experiment attains very high recall/ndcg values at some cutoffs (notably rec@20 and ndcg@20/@10), indicating that pairing CLIP-based visual/text embeddings with VGGish audio (disaligned) can boost retrieval-style metrics, while MAP/precision improvements are smaller and more nuanced. 
+\subsection{LastFM}
 
-Recommendations: perform modality ablations, statistical tests, and further checks on alignment and audio feature quality to better understand these mixed results.
+% Tables for LastFM (test results)
+% Table @5
+\begin{table}[H]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{|l|l|c|c|c|c|}
+    \hline
+    	\textbf{Model} & \textbf{Modality} & \textbf{rec@5} & \textbf{prec@5} & \textbf{ndcg@5} & \textbf{map@5} \\
+    \hline
+    BPR & None & 0.0655 & 0.1577 & 0.1595 & 0.1414 \\
+    \hline
+    VBPR & Text (MiniLM) & 0.0733 & 0.1742 & 0.1763 & 0.1585 \\
+    \hline
+    VBPR & Image (ViT) & 0.0754 & 0.1787 & 0.1813 & 0.1611 \\
+    \hline
+    VBPR & Text+Image (disaligned) & \textbf{0.0768} & \textbf{0.1831} & \textbf{0.1859} & \textbf{0.1660} \\
+    \hline
+    VBPR & Text+Image (CLIP) & 0.0707 & 0.1691 & 0.1714 & 0.1524 \\
+    \hline
+    VBPR & Text+Audio+Image (AudioCLIP) & 0.0694 & 0.1711 & 0.1735 & 0.1531 \\
+    \hline
+    \end{tabular}
+    \end{adjustbox}
+    \caption{Metrics at cutoff $k=5$ (test) for LastFM}
+    \label{tab:metrics_lastfm_k5}
+\end{table}
+
+% Table @10
+\begin{table}[H]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{|l|l|c|c|c|c|}
+    \hline
+    	\textbf{Model} & \textbf{Modality} & \textbf{rec@10} & \textbf{prec@10} & \textbf{ndcg@10} & \textbf{map@10} \\
+    \hline
+    BPR & None & 0.1132 & 0.1404 & 0.1534 & 0.1061 \\
+    \hline
+    VBPR & Text (MiniLM) & 0.1268 & 0.1531 & 0.1695 & 0.1200 \\
+    \hline
+    VBPR & Image (ViT) & 0.1298 & 0.1552 & 0.1734 & 0.1214 \\
+    \hline
+    VBPR & Text+Image (disaligned) & \textbf{0.1307} & \textbf{0.1560} & \textbf{0.1755} & \textbf{0.1242} \\
+    \hline
+    VBPR & Text+Image (CLIP) & 0.1222 & 0.1488 & 0.1646 & 0.1149 \\
+    \hline
+    VBPR & Text+Audio+Image (AudioCLIP) & 0.1196 & 0.1482 & 0.1636 & 0.1136 \\
+    \hline
+    \end{tabular}
+    \end{adjustbox}
+    \caption{Metrics at cutoff $k=10$ (test) for LastFM}
+    \label{tab:metrics_lastfm_k10}
+\end{table}
+
+% Table @20
+\begin{table}[H]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{|l|l|c|c|c|c|}
+    \hline
+    	\textbf{Model} & \textbf{Modality} & \textbf{rec@20} & \textbf{prec@20} & \textbf{ndcg@20} & \textbf{map@20} \\
+    \hline
+    BPR & None & 0.1890 & 0.1161 & 0.1703 & 0.0998 \\
+    \hline
+    VBPR & Text (MiniLM) & 0.1990 & 0.1218 & 0.1831 & 0.1119 \\
+    \hline
+    VBPR & Image (ViT) & \textbf{0.2086} & \textbf{0.1265} & \textbf{0.1899} & 0.1142 \\
+    \hline
+    VBPR & Text+Image (disaligned) & 0.2054 & 0.1243 & 0.1896 & \textbf{0.1153} \\
+    \hline
+    VBPR & Text+Image (CLIP) & 0.2009 & 0.1225 & 0.1820 & 0.1082 \\
+    \hline
+    VBPR & Text+Audio+Image (AudioCLIP) & 0.1915 & 0.1189 & 0.1766 & 0.1042 \\
+    \hline
+    \end{tabular}
+    \end{adjustbox}
+    \caption{Metrics at cutoff $k=20$ (test) for LastFM}
+    \label{tab:metrics_lastfm_k20}
+\end{table}
+
+% Table @50
+\begin{table}[H]
+    \centering
+    \begin{adjustbox}{max width=\textwidth}
+    \begin{tabular}{|l|l|c|c|c|c|}
+    \hline
+    	\textbf{Model} & \textbf{Modality} & \textbf{rec@50} & \textbf{prec@50} & \textbf{ndcg@50} & \textbf{map@50} \\
+    \hline
+    BPR & None & 0.3318 & 0.0814 & 0.2343 & 0.1211 \\
+    \hline
+    VBPR & Text (MiniLM) & 0.3494 & 0.0858 & 0.2509 & 0.1344 \\
+    \hline
+    VBPR & Image (ViT) & \textbf{0.3566} & \textbf{0.0867} & \textbf{0.2562} & 0.1367 \\
+    \hline
+    VBPR & Text+Image (disaligned) & 0.3484 & 0.0853 & 0.2543 & \textbf{0.1374} \\
+    \hline
+    VBPR & Text+Image (CLIP) & 0.3539 & \textbf{0.0867} & 0.2508 & 0.1314 \\
+    \hline
+    VBPR & Text+Audio+Image (AudioCLIP) & 0.3383 & 0.0835 & 0.2422 & 0.1257 \\
+    \hline
+    \end{tabular}
+    \end{adjustbox}
+    \caption{Metrics at cutoff $k=50$ (test) for LastFM}
+    \label{tab:metrics_lastfm_k50}
+\end{table}
 
 
 
