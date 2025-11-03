@@ -63,8 +63,13 @@ class LATTICE(GeneralRecommender):
         dataset_path = os.path.abspath(config['data_path'] + config['dataset'])
         image_adj_file = os.path.join(dataset_path, 'image_adj_{}.pt'.format(self.knn_k))
         text_adj_file = os.path.join(dataset_path, 'text_adj_{}.pt'.format(self.knn_k))
+        audio_adj_file = os.path.join(dataset_path, 'audio_adj_{}.pt'.format(self.knn_k))
 
+        # Contatore modalità disponibili
+        self.available_modalities = []
+        
         if self.v_feat is not None:
+            self.available_modalities.append('image')
             self.image_embedding = nn.Embedding.from_pretrained(self.v_feat, freeze=False)
             if os.path.exists(image_adj_file):
                 image_adj = torch.load(image_adj_file)
@@ -76,6 +81,7 @@ class LATTICE(GeneralRecommender):
             self.image_original_adj = image_adj.cuda()
 
         if self.t_feat is not None:
+            self.available_modalities.append('text')
             self.text_embedding = nn.Embedding.from_pretrained(self.t_feat, freeze=False)
             if os.path.exists(text_adj_file):
                 text_adj = torch.load(text_adj_file)
@@ -86,12 +92,34 @@ class LATTICE(GeneralRecommender):
                 torch.save(text_adj, text_adj_file)
             self.text_original_adj = text_adj.cuda()
 
+        if self.a_feat is not None:
+            self.available_modalities.append('audio')
+            self.audio_embedding = nn.Embedding.from_pretrained(self.a_feat, freeze=False)
+            if os.path.exists(audio_adj_file):
+                audio_adj = torch.load(audio_adj_file)
+            else:
+                audio_adj = build_sim(self.audio_embedding.weight.detach())
+                audio_adj = build_knn_neighbourhood(audio_adj, topk=self.knn_k)
+                audio_adj = compute_normalized_laplacian(audio_adj)
+                torch.save(audio_adj, audio_adj_file)
+            self.audio_original_adj = audio_adj.cuda()
+
+        # Creazione layer di trasformazione per ciascuna modalità disponibile
         if self.v_feat is not None:
             self.image_trs = nn.Linear(self.v_feat.shape[1], self.feat_embed_dim)
         if self.t_feat is not None:
             self.text_trs = nn.Linear(self.t_feat.shape[1], self.feat_embed_dim)
+        if self.a_feat is not None:
+            self.audio_trs = nn.Linear(self.a_feat.shape[1], self.feat_embed_dim)
 
-        self.modal_weight = nn.Parameter(torch.Tensor([0.5, 0.5]))
+        # Inizializzazione pesi modali in base al numero di modalità disponibili
+        n_modalities = len(self.available_modalities)
+        if n_modalities == 0:
+            raise ValueError("Nessuna modalità disponibile! Almeno una tra image, text o audio deve essere presente.")
+        
+        # Inizializzazione uniforme dei pesi
+        initial_weights = torch.ones(n_modalities) / n_modalities
+        self.modal_weight = nn.Parameter(initial_weights)
         self.softmax = nn.Softmax(dim=0)
 
     def pre_epoch_processing(self):
@@ -130,26 +158,49 @@ class LATTICE(GeneralRecommender):
         return torch.sparse.FloatTensor(indices, values, shape)
 
     def forward(self, adj, build_item_graph=False):
+        # Trasformazione features per ciascuna modalità disponibile
         if self.v_feat is not None:
             image_feats = self.image_trs(self.image_embedding.weight)
         if self.t_feat is not None:
             text_feats = self.text_trs(self.text_embedding.weight)
+        if self.a_feat is not None:
+            audio_feats = self.audio_trs(self.audio_embedding.weight)
+            
         if build_item_graph:
             weight = self.softmax(self.modal_weight)
-
+            
+            # Liste per accumulare le matrici di adiacenza
+            learned_adjs = []
+            original_adjs = []
+            
+            # Indice per i pesi
+            weight_idx = 0
+            
+            # Costruzione matrice di adiacenza per ciascuna modalità disponibile
             if self.v_feat is not None:
                 self.image_adj = build_sim(image_feats)
                 self.image_adj = build_knn_neighbourhood(self.image_adj, topk=self.knn_k)
-                learned_adj = self.image_adj
-                original_adj = self.image_original_adj
+                learned_adjs.append(weight[weight_idx] * self.image_adj)
+                original_adjs.append(weight[weight_idx] * self.image_original_adj)
+                weight_idx += 1
+                
             if self.t_feat is not None:
                 self.text_adj = build_sim(text_feats)
                 self.text_adj = build_knn_neighbourhood(self.text_adj, topk=self.knn_k)
-                learned_adj = self.text_adj
-                original_adj = self.text_original_adj
-            if self.v_feat is not None and self.t_feat is not None:
-                learned_adj = weight[0] * self.image_adj + weight[1] * self.text_adj
-                original_adj = weight[0] * self.image_original_adj + weight[1] * self.text_original_adj
+                learned_adjs.append(weight[weight_idx] * self.text_adj)
+                original_adjs.append(weight[weight_idx] * self.text_original_adj)
+                weight_idx += 1
+                
+            if self.a_feat is not None:
+                self.audio_adj = build_sim(audio_feats)
+                self.audio_adj = build_knn_neighbourhood(self.audio_adj, topk=self.knn_k)
+                learned_adjs.append(weight[weight_idx] * self.audio_adj)
+                original_adjs.append(weight[weight_idx] * self.audio_original_adj)
+                weight_idx += 1
+            
+            # Combinazione delle matrici di adiacenza con i pesi appresi
+            learned_adj = sum(learned_adjs)
+            original_adj = sum(original_adjs)
 
             learned_adj = compute_normalized_laplacian(learned_adj)
             if self.item_adj is not None:

@@ -10,24 +10,89 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
 
 
 def main():
-    """
-    Esegue tutti gli esperimenti:
-    1. BPR - baseline senza feature
-    2-8. VBPR con diverse combinazioni di feature multimodali
-    """
     experiments = [
-            {
-            'name': 'BPR_baseline',
-            'model': 'BPR',
-            'dataset': 'lastfm',
+        {
+            
+            'name': 'LATTICE_text_minilm',
+            'model': 'LATTICE',
+            'dataset': 'movielens_1m',
             'config': {
                 'gpu_id': 0,
+                'vision_feature_file': None,  # Non usare visual
+                'text_feature_file': 'text_minilm.npy',
+                'audio_feature_file': None,  # Non usare audio
+            }
+        },
+        {
+            'name': 'LATTICE_audio_vggish',
+            'model': 'LATTICE',
+            'dataset': 'movielens_1m',
+            'config': {
+                'gpu_id': 0,
+                'vision_feature_file': None,
+                'text_feature_file': None,
+                'audio_feature_file': 'audio_vggish.npy',
+            }
+        },
+        {
+            'name': 'LATTICE_image_vit',
+            'model': 'LATTICE',
+            'dataset': 'movielens_1m',
+            'config': {
+                'gpu_id': 0,
+                'vision_feature_file': 'image_vit.npy',
+                'text_feature_file': None,
+                'audio_feature_file': None,
+            }
+        },
+        {
+            'name': 'LATTICE_text_minilm_image_vit',
+            'model': 'LATTICE',
+            'dataset': 'movielens_1m',
+            'config': {
+                'gpu_id': 0,
+                'vision_feature_file': 'image_vit.npy',
+                'text_feature_file': 'text_minilm.npy',
+                'audio_feature_file': None,
+            }
+        },
+        {
+            'name': 'LATTICE_text_clip_image_clip',
+            'model': 'LATTICE',
+            'dataset': 'movielens_1m',
+            'config': {
+                'gpu_id': 0,
+                'vision_feature_file': 'image_clip.npy',
+                'text_feature_file': 'text_clip.npy',
+                'audio_feature_file': None,
+            }
+        },
+        {
+            'name': 'LATTICE_text_minilm_image_vit_audio_vggish',
+            'model': 'LATTICE',
+            'dataset': 'movielens_1m',
+            'config': {
+                'gpu_id': 0,
+                'vision_feature_file': 'image_vit.npy',
+                'text_feature_file': 'text_minilm.npy',
+                'audio_feature_file': 'audio_vggish.npy',
+            }
+        },
+        {
+            'name': 'LATTICE_audioclip_full',
+            'model': 'LATTICE',
+            'dataset': 'movielens_1m',
+            'config': {
+                'gpu_id': 0,
+                'vision_feature_file': 'image_audioclip.npy',
+                'text_feature_file': 'text_audioclip.npy',
+                'audio_feature_file': 'audio_audioclip.npy',
             }
         },
         {
             
-            'name': 'VBPR_text_minilm',
-            'model': 'VBPR',
+            'name': 'LATTICE_text_minilm',
+            'model': 'LATTICE',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -36,20 +101,9 @@ def main():
                 'audio_feature_file': None,  # Non usare audio
             }
         },
-       # {
-           # 'name': 'VBPR_audio_vggish',
-           # 'model': 'VBPR',
-           # 'dataset': 'lastfm',
-           # 'config': {
-            #    'gpu_id': 0,
-             #   'vision_feature_file': None,
-             #   'text_feature_file': None,
-             #   'audio_feature_file': 'audio_vggish.npy',
-           # }
-       # },
         {
-            'name': 'VBPR_image_vit',
-            'model': 'VBPR',
+            'name': 'LATTICE_image_vit',
+            'model': 'LATTICE',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -59,8 +113,8 @@ def main():
             }
         },
         {
-            'name': 'VBPR_text_minilm_image_vit',
-            'model': 'VBPR',
+            'name': 'LATTICE_text_minilm_image_vit',
+            'model': 'LATTICE',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -70,8 +124,8 @@ def main():
             }
         },
         {
-            'name': 'VBPR_text_clip_image_clip',
-            'model': 'VBPR',
+            'name': 'LATTICE_text_clip_image_clip',
+            'model': 'LATTICE',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -80,20 +134,10 @@ def main():
                 'audio_feature_file': None,
             }
         },
-      #  {
-        #    'name': 'VBPR_text_minilm_image_vit_audio_vggish',
-        #    'model': 'VBPR',
-        #    'dataset': 'lastfm',
-        #    'config': {
-         #       'gpu_id': 0,
-          #      'vision_feature_file': 'image_vit.npy',
-          #      'text_feature_file': 'text_minilm.npy',
-          #      'audio_feature_file': 'audio_vggish.npy',
-         #   }
-       # },
+
         {
-            'name': 'VBPR_audioclip_full',
-            'model': 'VBPR',
+            'name': 'LATTICE_audioclip_full',
+            'model': 'LATTICE',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -117,7 +161,7 @@ def main():
         print(f"{'='*80}")
         print(f"Modello: {exp['model']}")
         print(f"Dataset: {exp['dataset']}")
-        if exp['model'] == 'VBPR':
+        if exp['model'] == 'LATTICE':
             print(f"Features:")
             print(f"  - Vision: {exp['config'].get('vision_feature_file', 'None')}")
             print(f"  - Text:   {exp['config'].get('text_feature_file', 'None')}")
