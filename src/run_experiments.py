@@ -11,139 +11,151 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
 
 def main():
     experiments = [
-        {
+       # {
             
-            'name': 'LATTICE_text_minilm',
-            'model': 'LATTICE',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': None,  # Non usare visual
-                'text_feature_file': 'text_minilm.npy',
-                'audio_feature_file': None,  # Non usare audio
-            }
-        },
-        {
-            'name': 'LATTICE_audio_vggish',
-            'model': 'LATTICE',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': None,
-                'text_feature_file': None,
-                'audio_feature_file': 'audio_vggish.npy',
-            }
-        },
-        {
-            'name': 'LATTICE_image_vit',
-            'model': 'LATTICE',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_vit.npy',
-                'text_feature_file': None,
-                'audio_feature_file': None,
-            }
-        },
-        {
-            'name': 'LATTICE_text_minilm_image_vit',
-            'model': 'LATTICE',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_vit.npy',
-                'text_feature_file': 'text_minilm.npy',
-                'audio_feature_file': None,
-            }
-        },
-        {
-            'name': 'LATTICE_text_clip_image_clip',
-            'model': 'LATTICE',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_clip.npy',
-                'text_feature_file': 'text_clip.npy',
-                'audio_feature_file': None,
-            }
-        },
-        {
-            'name': 'LATTICE_text_minilm_image_vit_audio_vggish',
-            'model': 'LATTICE',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_vit.npy',
-                'text_feature_file': 'text_minilm.npy',
-                'audio_feature_file': 'audio_vggish.npy',
-            }
-        },
-        {
-            'name': 'LATTICE_audioclip_full',
-            'model': 'LATTICE',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_audioclip.npy',
-                'text_feature_file': 'text_audioclip.npy',
-                'audio_feature_file': 'audio_audioclip.npy',
-            }
-        },
-        {
+            #'name': 'LATTICE_text_minilm',
+            #'model': 'LATTICE',
+           # 'dataset': 'movielens_1m',
+            #'config': {
+             #   'gpu_id': 0,
+              #  'vision_feature_file': None,  # Non usare visual
+              #  'text_feature_file': 'text_minilm.npy',
+               # 'audio_feature_file': None,  # Non usare audio
+           # }
+       # },
+        #{
+         #   'name': 'LATTICE_audio_vggish',
+          #  'model': 'LATTICE',
+           # 'dataset': 'movielens_1m',
+        #    'config': {
+        #        'gpu_id': 0,
+        #        'vision_feature_file': None,
+        #        'text_feature_file': None,
+        #        'audio_feature_file': 'audio_vggish.npy',
+        #    }
+        #},
+       # {
+        #    'name': 'LATTICE_image_vit',
+         #   'model': 'LATTICE',
+          #  'dataset': 'movielens_1m',
+           # 'config': {
+            #    'gpu_id': 0,
+             #   'vision_feature_file': 'image_vit.npy',
+              #  'text_feature_file': None,
+               # 'audio_feature_file': None,
+           # }
+#        },
+#        {
+#            'name': 'LATTICE_text_minilm_image_vit',
+#            'model': 'LATTICE',
+#            'dataset': 'movielens_1m',
+#            'config': {
+#                'gpu_id': 0,
+#                'vision_feature_file': 'image_vit.npy',
+#                'text_feature_file': 'text_minilm.npy',
+#                'audio_feature_file': None,
+#            }
+#        },
+#        {
+#            'name': 'LATTICE_text_clip_image_clip',
+#            'model': 'LATTICE',
+#            'dataset': 'movielens_1m',
+#            'config': {
+#                'gpu_id': 0,
+#                'vision_feature_file': 'image_clip.npy',
+#                'text_feature_file': 'text_clip.npy',
+#                'audio_feature_file': None,
+#            }
+#        },
+        
+      #  {
+         #   'name': 'LATTICE_audioclip_full',
+         #   'model': 'LATTICE',
+         #   'dataset': 'movielens_1m',
+          #  'config': {
+          #      'gpu_id': 0,
+            #    'vision_feature_file': 'image_audioclip.npy',
+            #    'text_feature_file': 'text_audioclip.npy',
+            #    'audio_feature_file': 'audio_audioclip.npy',
+         #   }
+      #  },
+      #  {
             
-            'name': 'LATTICE_text_minilm',
-            'model': 'LATTICE',
-            'dataset': 'lastfm',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': None,  # Non usare visual
-                'text_feature_file': 'text_minilm.npy',
-                'audio_feature_file': None,  # Non usare audio
-            }
-        },
-        {
-            'name': 'LATTICE_image_vit',
-            'model': 'LATTICE',
-            'dataset': 'lastfm',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_vit.npy',
-                'text_feature_file': None,
-                'audio_feature_file': None,
-            }
-        },
-        {
-            'name': 'LATTICE_text_minilm_image_vit',
-            'model': 'LATTICE',
-            'dataset': 'lastfm',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_vit.npy',
-                'text_feature_file': 'text_minilm.npy',
-                'audio_feature_file': None,
-            }
-        },
-        {
-            'name': 'LATTICE_text_clip_image_clip',
-            'model': 'LATTICE',
-            'dataset': 'lastfm',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_clip.npy',
-                'text_feature_file': 'text_clip.npy',
-                'audio_feature_file': None,
-            }
-        },
+          #  'name': 'LATTICE_text_minilm',
+          #  'model': 'LATTICE',
+          #  'dataset': 'lastfm',
+          #  'config': {
+           #     'gpu_id': 0,
+            #    'vision_feature_file': None,  # Non usare visual
+            #    'text_feature_file': 'text_minilm.npy',
+            #    'audio_feature_file': None,  # Non usare audio
+          #  }
+      #  },
+     #   {
+        #    'name': 'LATTICE_image_vit',
+        #    'model': 'LATTICE',
+        #    'dataset': 'lastfm',
+        #    'config': {
+          #      'gpu_id': 0,
+          #      'vision_feature_file': 'image_vit.npy',
+           #     'text_feature_file': None,
+           #     'audio_feature_file': None,
+          #  }
+      #  },
+       # {
+        #    'name': 'LATTICE_text_minilm_image_vit',
+         #   'model': 'LATTICE',
+         #   'dataset': 'lastfm',
+          #  'config': {
+             #   'gpu_id': 0,
+              #  'vision_feature_file': 'image_vit.npy',
+              #  'text_feature_file': 'text_minilm.npy',
+              #  'audio_feature_file': None,
+          #  }
+      #  },
+      #  {
+         #   'name': 'LATTICE_text_clip_image_clip',
+          #  'model': 'LATTICE',
+          #  'dataset': 'lastfm',
+          #  'config': {
+           #     'gpu_id': 0,
+            #    'vision_feature_file': 'image_clip.npy',
+             #   'text_feature_file': 'text_clip.npy',
+            #    'audio_feature_file': None,
+           # }
+       # },
 
+        #{
+         #  'name': 'LATTICE_audioclip_full',
+          #  'model': 'LATTICE',
+          #  'dataset': 'lastfm',
+          #  'config': {
+            #    'gpu_id': 0,
+             #   'vision_feature_file': 'image_audioclip.npy',
+             #   'text_feature_file': 'text_audioclip.npy',
+             #   'audio_feature_file': 'audio_audioclip.npy',
+          #  }
+       # },
+       # {
+        #    'name': 'LATTICE_text_minilm_image_vit_audio_vggish',
+         #   'model': 'LATTICE',
+         #   'dataset': 'movielens_1m',
+         #   'config': {
+           #     'gpu_id': 0,
+             #   'vision_feature_file': 'image_vit.npy',
+           #     'text_feature_file': 'text_minilm.npy',
+             #   'audio_feature_file': 'audio_vggish.npy',
+           # }
+       # },
         {
-            'name': 'LATTICE_audioclip_full',
+            'name': 'LATTICE_text_clip_image_clip_audio_vggish',
             'model': 'LATTICE',
-            'dataset': 'lastfm',
+            'dataset': 'movielens_1m',
             'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_audioclip.npy',
-                'text_feature_file': 'text_audioclip.npy',
-                'audio_feature_file': 'audio_audioclip.npy',
+                'gpu_id': 1,
+                'vision_feature_file': 'image_clip.npy',
+                'text_feature_file': 'text_clip.npy',
+                'audio_feature_file': 'audio_vggish.npy',
             }
         },
     ]
@@ -170,6 +182,9 @@ def main():
         
         try:
             # Esegui l'esperimento
+            # Passa anche il nome dell'esperimento dentro il config_dict in modo
+            # che venga registrato nei report CSV
+            exp['config']['experiment_name'] = exp.get('name', None)
             quick_start(
                 model=exp['model'],
                 dataset=exp['dataset'],

@@ -16,6 +16,22 @@ import platform
 import os
 import csv
 from datetime import datetime
+import gc
+import torch
+
+
+def cleanup_gpu_memory():
+    """
+    Pulisce la memoria GPU e CPU tra le run di iperparametri
+    Previene memory leaks e segmentation faults
+    """
+    try:
+        gc.collect()  # Garbage collection Python
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()  # Svuota cache CUDA
+            torch.cuda.synchronize()  # Sincronizza con GPU
+    except Exception as e:
+        print(f"[WARNING] Errore durante cleanup GPU: {e}")
 
 
 def save_results_to_csv(config, best_valid_result, best_test_result, csv_filename):
@@ -36,11 +52,10 @@ def save_results_to_csv(config, best_valid_result, best_test_result, csv_filenam
     csv_path = os.path.join(reports_dir, csv_filename)
     
     # Prepara le intestazioni
-    fieldnames = ['timestamp', 'model', 'dataset']
-    
-    # Aggiungi configurazione feature (se VBPR)
-    if config['model'] == 'VBPR':
-        fieldnames.extend(['vision_feature', 'text_feature', 'audio_feature'])
+    # Sempre includiamo il nome dell'esperimento e le colonne feature in modo
+    # che l'header del CSV sia consistente anche alla prima scrittura.
+    fieldnames = ['timestamp', 'experiment_name', 'model', 'dataset',
+                  'vision_feature', 'text_feature', 'audio_feature']
     
     # Aggiungi i nomi degli iperparametri
     for param in config['hyper_parameters']:
@@ -73,11 +88,11 @@ def save_results_to_csv(config, best_valid_result, best_test_result, csv_filenam
             'dataset': config['dataset']
         }
         
-        # Aggiungi configurazione feature (se VBPR)
-        if config['model'] == 'VBPR':
-            row['vision_feature'] = config['vision_feature_file'] if config['vision_feature_file'] is not None else 'None'
-            row['text_feature'] = config['text_feature_file'] if config['text_feature_file'] is not None else 'None'
-            row['audio_feature'] = config['audio_feature_file'] if config['audio_feature_file'] is not None else 'None'
+        # Aggiungi configurazione feature (sempre presenti come colonne)
+        row['experiment_name'] = config['experiment_name'] if config['experiment_name'] is not None else 'None'
+        row['vision_feature'] = config['vision_feature_file'] if config['vision_feature_file'] is not None else 'None'
+        row['text_feature'] = config['text_feature_file'] if config['text_feature_file'] is not None else 'None'
+        row['audio_feature'] = config['audio_feature_file'] if config['audio_feature_file'] is not None else 'None'
         
         # Aggiungi gli iperparametri migliori
         # Gli iperparametri sono già stati impostati nel config durante il loop
@@ -145,7 +160,6 @@ def quick_start(model, dataset, config_dict, save_model=True, mg=False):
     combinators = list(product(*hyper_ls))
     total_loops = len(combinators)
     for hyper_tuple in combinators:
-        # random seed reset
         for j, k in zip(config['hyper_parameters'], hyper_tuple):
             config[j] = k
         init_seed(config['seed'])
@@ -178,6 +192,16 @@ def quick_start(model, dataset, config_dict, save_model=True, mg=False):
         logger.info('████Current BEST████:\nParameters: {}={},\n'
                     'Valid: {},\nTest: {}\n\n\n'.format(config['hyper_parameters'],
             hyper_ret[best_test_idx][0], dict2str(hyper_ret[best_test_idx][1]), dict2str(hyper_ret[best_test_idx][2])))
+    
+
+        if 'model' in locals():
+            del model
+        if 'trainer' in locals():
+            del trainer
+        
+        # Pulisci la memoria GPU e CPU
+        cleanup_gpu_memory()
+        logger.debug(f'[Cleanup] Risorse liberate prima della prossima run')
 
     # log info
     logger.info('\n============All Over=====================')
@@ -190,6 +214,10 @@ def quick_start(model, dataset, config_dict, save_model=True, mg=False):
                                                                    hyper_ret[best_test_idx][0],
                                                                    dict2str(hyper_ret[best_test_idx][1]),
                                                                    dict2str(hyper_ret[best_test_idx][2])))
+
+    # ===== FINAL CLEANUP =====
+    cleanup_gpu_memory()
+    logger.info('[Cleanup] Cleanup finale completato')
 
     # Salva SOLO i risultati del miglior modello in CSV
     csv_filename = f"best_results_{config['model']}_{config['dataset']}.csv"

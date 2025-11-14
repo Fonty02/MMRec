@@ -10404,3 +10404,7 @@ Dataset: movielens_1m
 
 ✓ Esperimento 1/8 completato con successo!
 
+
+
+screen -r Fonty per connettersi
+CTRL+a e poi D per chiudere screen ma lasciarlo in esecuzione in background
