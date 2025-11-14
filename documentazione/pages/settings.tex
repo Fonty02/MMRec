@@ -101,44 +101,18 @@ Multiple encoder architectures are employed to extract embeddings, providing bot
 
 \paragraph{Step 1: File Discovery and Alignment}
 
-The script scans three input directories containing raw multimodal data:
+Directories containing raw multimodal data are scanned:
 \begin{itemize}
     \item Identifies files by basename (e.g., movie ID or artist\_track combination)
-    \item Builds maps from basename to absolute file paths
     \item Computes the \textbf{intersection} of basenames across all three modalities
 \end{itemize}
 
 Only items present in all three modalities are considered candidates for extraction. This ensures row-wise correspondence in the final embedding arrays.
 
-\paragraph{Step 2: Audio Validation}
 
-Before extraction, audio files undergo validation to detect corrupted or unreadable files. 
-Invalid audio files are logged and excluded from processing. Exclusion is global: if an audio file fails validation, the corresponding image and text files are also removed to maintain alignment.
-
-\paragraph{Step 3: Extraction}
+\paragraph{Step 2: Extraction}
 Files that pass validation are processed in order to extract embeddings. If the extraction for a specific modality fails (e.g., due to file corruption), the entire item is excluded to ensure strict alignment.
 
-\subsubsection{Output Files}
-
-The extraction pipeline produces the following files:
-
-\paragraph{Embedding Arrays (NumPy format)}
-Per-modality embeddings for each encoder:
-\begin{itemize}
-    \item AudioCLIP: \texttt{image\_audioclip.npy}, \texttt{audio\_audioclip.npy}, \texttt{text\_audioclip.npy}
-    \item CLIP: \texttt{image\_clip.npy}, \texttt{text\_clip.npy}
-    \item ViT: \texttt{image\_vit.npy}
-    \item VGGish: \texttt{audio\_vggish.npy}
-    \item MiniLM: \texttt{text\_minilm.npy}
-\end{itemize}
-
-
-\paragraph{Metadata}
-\begin{itemize}
-    \item \texttt{item\_features.csv}: Maps item identifier (basename) to row index in embedding arrays
-    \item Format: two columns (item\_id, row\_index)
-    \item \textbf{Critical property}: Row $i$ in each \texttt{.npy} file corresponds to the same item
-\end{itemize}
 
 
 % =============================================================================
@@ -151,8 +125,7 @@ After embedding extraction, the interaction datasets must be filtered and remapp
 
 Both datasets follow the same core logic:
 \begin{enumerate}
-    \item Load original interaction file and \texttt{item\_features.csv}
-    \item Filter interactions to include only items with complete multimodal embeddings
+    \item Load original interaction file and a .csv mapping of item IDs to embedding row indices
     \item Apply 5-core filtering to ensure interaction density
     \item Remap user and item IDs to contiguous ranges [0, ..., n-1]
     \item Reconstruct embedding arrays in the new item order
@@ -167,12 +140,12 @@ The key difference lies in \textbf{Step 2}, where LastFM requires special handli
 The script loads:
 \begin{itemize}
     \item \texttt{movielens\_1m.inter}: Original interaction file (user\_id, item\_id, rating, timestamp)
-    \item \texttt{item\_features.csv}: Mapping from movie ID to embedding row index
+    \item A .csv mapping from movie ID to embedding row index
     \item All \texttt{.npy} embedding files
 \end{itemize}
 
 \paragraph{Step 2: Feature-Based Filtering}
-Check between \texttt{movielens\_1m.inter} and \texttt{item\_features.csv} to retain only interactions referencing movies contained in both files.
+Check between \texttt{movielens\_1m.inter} and the .csv file to retain only interactions referencing movies contained in both files.
 
 \paragraph{Step 3: 5-Core Filtering}
 To address data sparsity, the script applies iterative 5-core filtering:
@@ -195,18 +168,7 @@ After filtering, IDs may be non-contiguous. The script creates contiguous mappin
 \end{itemize}
 
 \paragraph{Step 5: Embedding Reindexing}
-The original embedding arrays are indexed according to \texttt{item\_features.csv}. After remapping, embeddings must be reordered to match the new item indices:
-
-\textbf{Algorithm}:
-\begin{enumerate}
-    \item For each new item index $j \in [0, n-1]$:
-    \begin{itemize}
-        \item Lookup original item ID: $i_{\text{old}} = \text{item\_mapping}^{-1}[j]$
-        \item Find row index in original embeddings: $r = \text{item\_features}[i_{\text{old}}]$
-        \item Copy embedding vectors: $\text{embedding\_new}[j] = \text{embedding\_old}[r]$
-    \end{itemize}
-    \item Save reindexed embeddings
-\end{enumerate}
+After remapping, the embedding arrays are reconstructed to match the new item order and a new .csv mapping file is generated.
 
 
 \subsubsection{LastFM Mapping}
@@ -221,7 +183,7 @@ LastFM requires special handling due to a structural mismatch:
 
 The mapper resolves this mismatch by:
 \begin{enumerate}
-    \item Mapping each artist to all available track variants in \texttt{item\_features.csv}
+    \item Mapping each artist to all available track variants in the .csv file
     \item Expanding each user-artist interaction into multiple user-track interactions
     \item Treating each variant as a separate item in the recommendation task
 \end{enumerate}
@@ -232,7 +194,7 @@ The mapper resolves this mismatch by:
 The script loads:
 \begin{itemize}
     \item \texttt{lastfm.inter}: Original interaction file (user\_id, artist\_id, listen\_count, timestamp)
-    \item \texttt{item\_features.csv}: Mapping from \texttt{artist\_track} identifier to embedding row index
+    \item A .csv mapping from \texttt{artist\_track} identifier to embedding row index
     \item All \texttt{.npy} embedding files
 \end{itemize}
 
@@ -241,7 +203,7 @@ The script performs two sub-steps:
 
 \textbf{Sub-step 2a: Build Artist-to-Tracks Dictionary}
 \begin{itemize}
-    \item Parse \texttt{item\_features.csv} to extract artist and track identifiers
+    \item Parse the .csv file to extract artist and track identifiers
     \item Group tracks by artist: $\text{artist} \rightarrow [\text{track}_1, \text{track}_2, ...]$
 \end{itemize}
 
@@ -256,10 +218,76 @@ This expansion significantly increases the number of interactions.
 
 \paragraph{Step 3--5: Standard Pipeline}
 
-After expansion, the pipeline follows the same steps as MovieLens:
-\begin{itemize}
-    \item 5-core filtering (now at track level)
-    \item Contiguous ID remapping
-    \item Embedding reindexing
-\end{itemize}
+After expansion, the pipeline follows the same steps as MovieLens
+
+% =============================================================================
+\subsection{Data Distribution Extraction}
+
+After extracting and remapping embeddings, it is essential to analyze their geometric and statistical properties to understand how different encoders structure the feature space.
+
+\subsubsection{Overview}
+
+The distribution extraction pipeline performs the following steps:
+\begin{enumerate}
+    \item Load pre-extracted embedding arrays (\texttt{.npy} files)
+    \item Apply UMAP for dimensionality reduction to 2D
+    \item Normalize reduced embeddings onto the unit circle (S1 manifold)
+    \item Compute 2D Gaussian KDE for spatial density visualization
+    \item Compute angular KDE for directional distribution analysis
+\end{enumerate}
+
+\subsubsection{UMAP Dimensionality Reduction}
+
+High-dimensional embeddings are reduced to 2D using UMAP (Uniform Manifold Approximation and Projection).
+
+\paragraph{Algorithm Overview}
+
+UMAP is technique used to projects an high-dimensional space into a lower-dimensional soace while preserving both local and global structure. The algorithm operates in three main phases:
+
+\begin{enumerate}
+    \item \textbf{Graph Construction}: Build a weighted k-nearest neighbor graph in high-dimensional space, where edge weights represent fuzzy membership strengths based on local distance distributions
+    \item \textbf{Fuzzy Simplicial Set}: Convert the neighbor graph into a fuzzy topological structure that captures the geometry
+    \item \textbf{Optimization}: Minimize the cross-entropy between the high-dimensional fuzzy set and its low-dimensional representation using stochastic gradient descent
+\end{enumerate}
+
+
+\paragraph{S1 Normalization}
+
+After UMAP reduction, all points are projected onto the unit circle:
+\begin{enumerate}
+    \item Center the data: $\mathbf{x}_i' = \mathbf{x}_i - \bar{\mathbf{x}}$
+    \item Normalize by Euclidean norm: $\mathbf{x}_i'' = \frac{\mathbf{x}_i'}{||\mathbf{x}_i'||}$
+\end{enumerate}
+
+
+\subsubsection{Density Estimation}
+
+Two complementary density estimation methods are applied to quantify the spatial and directional distribution of embeddings.
+
+\paragraph{ 2D Gaussia Kernel Density Estimation (KDE) Overview}
+
+KDE is a non-parametric method for estimating the probability density function of a random variable. Given a set of data points $\{\mathbf{x}_1, \ldots, \mathbf{x}_n\}$, the kernel density estimate at position $\mathbf{x}$ is:
+
+\[
+\hat{f}(\mathbf{x}) = \frac{1}{n} \sum_{i=1}^{n} K_h(\mathbf{x} - \mathbf{x}_i)
+\]
+
+where $K_h$ is a kernel function (in this case the Gaussian kernel) 
+
+
+This reveals regions of high and low embedding density, indicating clustering patterns and feature space coverage.
+
+\paragraph{Angular KDE}
+
+The distribution of angular positions is analyzed separately:
+\begin{enumerate}
+    \item Convert Cartesian coordinates to polar angles: $\theta_i = \arctan2(y_i, x_i)$
+    \item Fit Gaussian KDE on angular values: $\theta \in [-\pi, \pi]$
+    \item Plot density function as a 1D curve
+\end{enumerate}
+
+This analysis reveals if embeddings are uniformly distributed or not
+
+
+
 

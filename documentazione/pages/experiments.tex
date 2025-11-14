@@ -1,9 +1,108 @@
 \section{Experiments}
 
+\subsection{Data distribution}
 
+This section presents the spatial and angular distribution of embeddings extracted from the MovieLens 1M and LastFM datasets. Each figure shows the 2D UMAP projection with KDE contours (top row) and the angular density distribution on the unit circle (bottom row) for different encoder configurations.
+
+\subsubsection{MovieLens 1M}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_minilm_kde.png}
+    \caption{MovieLens 1M - Text embeddings (MiniLM)}
+    \label{fig:ml1m_text_minilm}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_audio_vggish_kde.png}
+    \caption{MovieLens 1M - Audio embeddings (VGGish)}
+    \label{fig:ml1m_audio_vggish}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_image_vit_kde.png}
+    \caption{MovieLens 1M - Image embeddings (ViT)}
+    \label{fig:ml1m_image_vit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_minilm_image_vit_kde.png}
+    \caption{MovieLens 1M - Text (MiniLM) + Image (ViT) embeddings (disaligned)}
+    \label{fig:ml1m_text_image_disaligned}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_clip_image_clip_kde.png}
+    \caption{MovieLens 1M - Text + Image embeddings (CLIP aligned)}
+    \label{fig:ml1m_clip_aligned}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_minilm_image_vit_audio_vggish_kde.png}
+    \caption{MovieLens 1M - Text (MiniLM) + Image (ViT) + Audio (VGGish) embeddings (disaligned)}
+    \label{fig:ml1m_trimodal_disaligned}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_clip_image_clip_audio_vggish_kde.png}
+    \caption{MovieLens 1M - CLIP (Text + Image) + Audio (VGGish) embeddings}
+    \label{fig:ml1m_clip_audio}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_audioclip_full_kde.png}
+    \caption{MovieLens 1M - AudioCLIP aligned embeddings (Text + Image + Audio)}
+    \label{fig:ml1m_audioclip_full}
+\end{figure}
+
+\subsubsection{LastFM}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/lastfm_LATTICE_text_minilm_kde.png}
+    \caption{LastFM - Text embeddings (MiniLM)}
+    \label{fig:lastfm_text_minilm}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/lastfm_LATTICE_image_vit_kde.png}
+    \caption{LastFM - Image embeddings (ViT)}
+    \label{fig:lastfm_image_vit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/lastfm_LATTICE_text_minilm_image_vit_kde.png}
+    \caption{LastFM - Text (MiniLM) + Image (ViT) embeddings (disaligned)}
+    \label{fig:lastfm_text_image_disaligned}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/lastfm_LATTICE_text_clip_image_clip_kde.png}
+    \caption{LastFM - Text + Image embeddings (CLIP aligned)}
+    \label{fig:lastfm_clip_aligned}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{../data/reports/experiment_plots/lastfm_LATTICE_audioclip_full_kde.png}
+    \caption{LastFM - AudioCLIP aligned embeddings (Text + Image + Audio)}
+    \label{fig:lastfm_audioclip_full}
+\end{figure}
+
+\subsection{Results Overview}
 This section reports test-set results for several models and multimodal configurations. Tables are grouped by cutoff $k$: one table for @5, @10, @20 and @50. For each row we report Recall, Precision, NDCG and MAP at the corresponding cutoff.
 
-\subsection{MovieLens\_1M}
+\subsubsection{MovieLens\_1M}
 
 % NOTE: default extractors
 \paragraph{Feature extractors used}
@@ -26,7 +125,7 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \hline
     VBPR & Text (MiniLM) & 0.1144 & 0.1999 & 0.2196 & 0.1363 \\
     \hline
-    VBPR & Audio (VGGish) & 0.1147 & \textbf{0.2015} & 0.2217 & 0.1374 \\
+    VBPR & Audio (VGGish) & 0.1147 & 0.2015 & 0.2217 & 0.1374 \\
     \hline
     VBPR & Image (ViT) & 0.1148 & 0.1985 & 0.2193 & 0.1356 \\
     \hline
@@ -34,11 +133,27 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \hline
     VBPR & Text+Image (CLIP) & 0.1152 & 0.1997 & 0.2205 & 0.1376 \\
     \hline
-    VBPR & Text+Audio+Image (disaligned) & \textbf{0.1163} & 0.1986 & 0.2191 & 0.1356 \\
+    VBPR & Text+Audio+Image (disaligned) & 0.1163 & 0.1986 & 0.2191 & 0.1356 \\
     \hline
     VBPR & Text+Audio+Image (AudioCLIP) & 0.0940 & 0.1694 & 0.1857 & 0.1125 \\
     \hline
-    VBPR & CLIP+audio (disaligned) & 0.1898 & 0.2009 & \textbf{0.2299} & \textbf{0.1384} \\
+    VBPR & CLIP+audio (disaligned) & \textbf{0.1158} & \textbf{0.2009} & \textbf{0.2223} & \textbf{0.1384} \\
+    \hline
+    LATTICE & Text (MiniLM) & 0.1131 & 0.1974 & 0.2169 & 0.1341 \\
+    \hline
+    LATTICE & Audio (VGGish) & 0.108 & 0.1908 & 0.2114 & 0.1312 \\
+    \hline
+    LATTICE & Image (ViT) & 0.1118 & 0.1931 & 0.2139 & 0.132 \\
+    \hline
+    LATTICE & Text+Image (disaligned) & 0.1146 & 0.1964 & 0.2172 & 0.1343 \\
+    \hline
+    LATTICE & Text+Image (CLIP) & 0.1147 & 0.1963 & 0.2172 & 0.1344 \\
+    \hline
+    LATTICE & Text+Audio+Image (AudioCLIP) & 0.1133 & 0.1978 & 0.2199 & 0.1375 \\
+    \hline
+    LATTICE & Text+Audio+Image (disaligned) & 0.1137 & 0.1971 & 0.2194 & 0.1366 \\
+    \hline
+    LATTICE & CLIP+audio (disaligned) & 0.114 & 0.1988 & 0.2204 & 0.1376 \\
     \hline
     \end{tabular}
     \end{adjustbox}
@@ -64,13 +179,29 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \hline
     VBPR & Text+Image (disaligned) & 0.1895 & 0.1725 & 0.2279 & 0.1199 \\
     \hline
-    VBPR & Text+Image (CLIP) & 0.1911 & \textbf{0.1745} & 0.2300 & \textbf{0.1211} \\
+    VBPR & Text+Image (CLIP) & 0.1911 & \textbf{0.1745} & \textbf{0.2300} & \textbf{0.1211} \\
     \hline
     VBPR & Text+Audio+Image (disaligned) & 0.1876 & 0.1718 & 0.2271 & 0.1195 \\
     \hline
     VBPR & Text+Audio+Image (AudioCLIP) & 0.1570 & 0.1476 & 0.1922 & 0.0969 \\
     \hline
-    VBPR & CLIP+audio (disaligned) & \textbf{0.2936} & 0.1734 & \textbf{0.2562} & 0.1211 \\
+    VBPR & CLIP+audio (disaligned) & \textbf{0.1898} & 0.1734 & 0.2299 & \textbf{0.1211} \\
+    \hline
+    LATTICE & Text (MiniLM) & 0.1848 & 0.1693 & 0.2238 & 0.117 \\
+    \hline
+    LATTICE & Audio (VGGish) & 0.1806 & 0.1676 & 0.2203 & 0.1153 \\
+    \hline
+    LATTICE & Image (ViT) & 0.1835 & 0.1677 & 0.2221 & 0.1158 \\
+    \hline
+    LATTICE & Text+Image (disaligned) & 0.1857 & 0.1689 & 0.2247 & 0.1181 \\
+    \hline
+    LATTICE & Text+Image (CLIP) & 0.1856 & 0.1694 & 0.2248 & 0.118 \\
+    \hline
+    LATTICE & Text+Audio+Image (AudioCLIP) & 0.1883 & 0.1721 & 0.2284 & 0.1206 \\
+    \hline
+    LATTICE & Text+Audio+Image (disaligned) & 0.1861 & 0.1702 & 0.2267 & 0.1194 \\
+    \hline
+    LATTICE & CLIP+audio (disaligned) & 0.1876 & 0.1715 & 0.2279 & 0.1202 \\
     \hline
     \end{tabular}
     \end{adjustbox}
@@ -88,7 +219,7 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \hline
     BPR & None & 0.2743 & 0.1341 & 0.2400 & 0.1112 \\
     \hline
-    VBPR & Text (MiniLM) & 0.2939 & 0.1425 & 0.2544 & 0.1195 \\
+    VBPR & Text (MiniLM) & \textbf{0.2939} & 0.1425 & 0.2544 & 0.1195 \\
     \hline
     VBPR & Audio (VGGish) & 0.2913 & \textbf{0.1432} & 0.2543 & 0.1193 \\
     \hline
@@ -96,13 +227,29 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \hline
     VBPR & Text+Image (disaligned) & 0.2904 & 0.1422 & 0.2534 & 0.1194 \\
     \hline
-    VBPR & Text+Image (CLIP) & 0.2942 & 0.1424 & \textbf{0.2554} & 0.1204 \\
+    VBPR & Text+Image (CLIP) & 0.2942 & 0.1424 & 0.2554 & 0.1204 \\
     \hline
     VBPR & Text+Audio+Image (disaligned) & 0.2926 & 0.1426 & 0.2542 & 0.1196 \\
     \hline
     VBPR & Text+Audio+Image (AudioCLIP) & 0.2466 & 0.1225 & 0.2147 & 0.0957 \\
     \hline
-    VBPR & CLIP+audio (disaligned) & \textbf{0.4677} & 0.1432 & 0.3148 & \textbf{0.1208} \\
+    VBPR & CLIP+audio (disaligned) & 0.2936 & \textbf{0.1432} & \textbf{0.2562} & \textbf{0.1208} \\
+    \hline
+    LATTICE & Text (MiniLM) & 0.2862 & 0.1391 & 0.249 & 0.1162 \\
+    \hline
+    LATTICE & Audio (VGGish) & 0.2805 & 0.1375 & 0.2446 & 0.1139 \\
+    \hline
+    LATTICE & Image (ViT) & 0.2828 & 0.1371 & 0.2467 & 0.1151 \\
+    \hline
+    LATTICE & Text+Image (disaligned) & 0.2867 & 0.1392 & 0.2504 & 0.1179 \\
+    \hline
+    LATTICE & Text+Image (CLIP) & 0.2887 & 0.1402 & 0.2513 & 0.118 \\
+    \hline
+    LATTICE & Text+Audio+Image (AudioCLIP) & 0.2892 & 0.1409 & 0.2532 & 0.1196 \\
+    \hline
+    LATTICE & Text+Audio+Image (disaligned) & 0.2878 & 0.1404 & 0.2522 & 0.1188 \\
+    \hline
+    LATTICE & CLIP+audio (disaligned) & 0.2881 & 0.1406 & 0.2528 & 0.1194 \\
     \hline
     \end{tabular}
     \end{adjustbox}
@@ -128,13 +275,29 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \hline
     VBPR & Text+Image (disaligned) & 0.4646 & 0.0999 & 0.3119 & 0.1335 \\
     \hline
-    VBPR & Text+Image (CLIP) & \textbf{0.4681} & 0.1001 & \textbf{0.3141} & 0.1347 \\
+    VBPR & Text+Image (CLIP) & \textbf{0.4681} & 0.1001 & \textbf{0.3141} & \textbf{0.1347} \\
     \hline
     VBPR & Text+Audio+Image (disaligned) & 0.4672 & 0.1001 & 0.3129 & 0.1339 \\
     \hline
     VBPR & Text+Audio+Image (AudioCLIP) & 0.4176 & 0.0892 & 0.2721 & 0.1082 \\
     \hline
-    VBPR & CLIP+audio (disaligned) & 0.2223 & 0.1004 & 0.2009 & \textbf{0.1351} \\
+    VBPR & CLIP+audio (disaligned) & 0.4677 & 0.1004 & 0.3148 & 0.1351 \\
+    \hline
+    LATTICE & Text (MiniLM) & 0.4603 & 0.098 & 0.3073 & 0.13 \\
+    \hline
+    LATTICE & Audio (VGGish) & 0.4536 & 0.0971 & 0.3025 & 0.1273 \\
+    \hline
+    LATTICE & Image (ViT) & 0.4589 & 0.0973 & 0.3061 & 0.1295 \\
+    \hline
+    LATTICE & Text+Image (disaligned) & 0.4649 & 0.0983 & 0.3102 & 0.1322 \\
+    \hline
+    LATTICE & Text+Image (CLIP) & 0.4649 & 0.099 & 0.3106 & 0.1323 \\
+    \hline
+    LATTICE & Text+Audio+Image (AudioCLIP) & 0.4641 & 0.0989 & 0.3116 & 0.1333 \\
+    \hline
+    LATTICE & Text+Audio+Image (disaligned) & 0.4634 & 0.0989 & 0.3109 & 0.1326 \\
+    \hline
+    LATTICE & CLIP+audio (disaligned) & 0.4629 & 0.0986 & 0.3111 & 0.1331 \\
     \hline
     \end{tabular}
     \end{adjustbox}
@@ -142,7 +305,7 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \label{tab:metrics_k50}
 \end{table}
 
-\subsection{LastFM}
+\subsubsection{LastFM}
 
 % Tables for LastFM (test results)
 % Table @5
@@ -164,6 +327,16 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     VBPR & Text+Image (CLIP) & 0.0707 & 0.1691 & 0.1714 & 0.1524 \\
     \hline
     VBPR & Text+Audio+Image (AudioCLIP) & 0.0694 & 0.1711 & 0.1735 & 0.1531 \\
+    \hline
+    LATTICE & Text (MiniLM) & 0.0679 & 0.1643 & 0.1657 & 0.1575 \\
+    \hline
+    LATTICE & Image (ViT) & 0.0684 & 0.1652 & 0.1664 & 0.1456 \\
+    \hline
+    LATTICE & Text+Image (disaligned) & 0.0692 & 0.1685 & 0.1685 & 0.1564 \\
+    \hline
+    LATTICE & Text+Image (CLIP) & 0.0714 & 0.1721 & 0.1734 & 0.1624 \\
+    \hline
+    LATTICE & Text+Audio+Image (AudioCLIP) & 0.0701 & 0.1682 & 0.1692 & 0.1559 \\
     \hline
     \end{tabular}
     \end{adjustbox}
@@ -191,6 +364,16 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \hline
     VBPR & Text+Audio+Image (AudioCLIP) & 0.1196 & 0.1482 & 0.1636 & 0.1136 \\
     \hline
+    LATTICE & Text (MiniLM) & 0.1222 & 0.1492 & 0.1627 & 0.1195 \\
+    \hline
+    LATTICE & Image (ViT) & 0.1193 & 0.1475 & 0.1608 & 0.1109 \\
+    \hline
+    LATTICE & Text+Image (disaligned) & 0.1233 & 0.1516 & 0.164 & 0.1184 \\
+    \hline
+    LATTICE & Text+Image (CLIP) & 0.1244 & 0.1537 & 0.1676 & 0.1216 \\
+    \hline
+    LATTICE & Text+Audio+Image (AudioCLIP) & 0.1231 & 0.1508 & 0.1643 & 0.1173 \\
+    \hline
     \end{tabular}
     \end{adjustbox}
     \caption{Metrics at cutoff $k=10$ (test) for LastFM}
@@ -216,6 +399,16 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     VBPR & Text+Image (CLIP) & 0.2009 & 0.1225 & 0.1820 & 0.1082 \\
     \hline
     VBPR & Text+Audio+Image (AudioCLIP) & 0.1915 & 0.1189 & 0.1766 & 0.1042 \\
+    \hline
+    LATTICE & Text (MiniLM) & 0.2001 & 0.1241 & 0.1804 & 0.1119 \\
+    \hline
+    LATTICE & Image (ViT) & 0.1998 & 0.1228 & 0.1791 & 0.1047 \\
+    \hline
+    LATTICE & Text+Image (disaligned) & 0.2017 & 0.1248 & 0.1813 & 0.1108 \\
+    \hline
+    LATTICE & Text+Image (CLIP) & 0.2038 & 0.1254 & 0.1847 & 0.1138 \\
+    \hline
+    LATTICE & Text+Audio+Image (AudioCLIP) & 0.204 & 0.1255 & 0.1833 & 0.1114 \\
     \hline
     \end{tabular}
     \end{adjustbox}
@@ -243,11 +436,92 @@ Unless explicitly specified in a table row as \emph{CLIP} or \emph{AudioCLIP}, t
     \hline
     VBPR & Text+Audio+Image (AudioCLIP) & 0.3383 & 0.0835 & 0.2422 & 0.1257 \\
     \hline
+    LATTICE & Text (MiniLM) & 0.349 & 0.0854 & 0.2464 & 0.1338 \\
+    \hline
+    LATTICE & Image (ViT) & 0.3415 & 0.0839 & 0.2427 & 0.1258 \\
+    \hline
+    LATTICE & Text+Image (disaligned) & 0.3445 & 0.0842 & 0.2446 & 0.1316 \\
+    \hline
+    LATTICE & Text+Image (CLIP) & 0.3449 & 0.0843 & 0.2477 & 0.1349 \\
+    \hline
+    LATTICE & Text+Audio+Image (AudioCLIP) & 0.3481 & 0.0853 & 0.2475 & 0.1329 \\
+    \hline
     \end{tabular}
     \end{adjustbox}
     \caption{Metrics at cutoff $k=50$ (test) for LastFM}
     \label{tab:metrics_lastfm_k50}
 \end{table}
+
+\subsection{Discussion}
+
+This section analyzes the experimental results across both datasets, examining the impact of aligned vs. disaligned multimodal embeddings on recommendation performance and the geometric properties of the embedding spaces.
+
+\subsubsection{MovieLens 1M: Performance Analysis}
+
+\paragraph{Overall Performance Trends}
+
+The MovieLens 1M results reveal several key patterns:
+
+\begin{itemize}
+    \item \textbf{Multimodal superiority}: All multimodal configurations outperform the unimodal BPR baseline across all metrics and cutoffs
+    \item \textbf{VBPR dominance}: VBPR consistently achieves higher performance than LATTICE across most configurations
+    \item \textbf{Best configuration}: VBPR with CLIP+Audio (disaligned) achieves the highest performance at most cutoffs
+\end{itemize}
+
+
+\begin{itemize}
+    \item CLIP-aligned Text+Image outperforms disaligned MiniLM+ViT 
+    \item This validates the hypothesis that semantic alignment facilitates cross-modal feature integration
+\end{itemize}
+
+
+\begin{itemize}
+    \item Adding audio to CLIP embeddings yields the best overall performance
+    \item Surprisingly, fully-aligned AudioCLIP (Text+Audio+Image) performs significantly worse than all other configurations
+    \item This suggests that AudioCLIP's joint embedding space may be insufficiently expressive for recommendation tasks
+\end{itemize}
+
+\paragraph{AudioCLIP Anomaly}
+
+The poor performance of AudioCLIP may be attributed to the embedding space:
+
+\begin{itemize}
+    \item \textbf{Geometric evidence}: Figure~\ref{fig:ml1m_audioclip_full} reveals tha the distributions of audio and image are very similar, while text's distribution in completely different. If we look at Figure~\ref{fig:ml1m_clip_audio} we can see that audio and image's distribution are, also here, very similar while text's distribution is different but not as much as in the previous figure.
+    \item \textbf{Hypothesis}: AudioCLIP's aggressive alignment may collapse semantically distinct items into overlapping regions, reducing discriminative power
+\end{itemize}
+
+\subsubsection{LastFM: Performance Analysis}
+
+\paragraph{Overall Performance Trends}
+
+LastFM exhibits different patterns compared to MovieLens:
+
+\begin{itemize}
+    \item \textbf{VBPR superiority}: VBPR significantly outperforms LATTICE, especially in unimodal and bimodal settings
+    \item \textbf{Best configuration}: VBPR with disaligned Text+Image achieves peak performance at lower cutoffs
+    \item \textbf{CLIP underperformance}: Unlike MovieLens, CLIP-aligned embeddings perform worse than disaligned alternatives on LastFM
+    \item \textbf{AudioCLIP consistency}: AudioCLIP performs competitively with other configurations, unlike the MovieLens anomaly
+\end{itemize}
+
+\paragraph{Alignment vs. Disalignment Trade-offs}
+
+\textbf{Geometric analysis1} (Figures~\ref{fig:lastfm_text_image_disaligned}, \ref{fig:lastfm_clip_aligned}) indicates that, in both cases, the distributions of text and image cover the entire space. If we look at the angular distributions, we can see that in the disaligned case (Figure~\ref{fig:lastfm_text_image_disaligned}) there are more peaks than in the aligned case (Figure~\ref{fig:lastfm_clip_aligned}). This indicates that the disaligned embeddings have more diverse directional orientations, which could help capture different aspects of user preferences while the aligned embeddings have less diverse directional orientations, which could limit their ability to represent varied user interests.
+
+
+\subsubsection{Key Findings and Implications}
+
+\paragraph{RQ1: Can aligned multimodal embeddings enhance recommendation performance?}
+
+\textbf{Answer}: \textit{It depends on the dataset and alignment method.}
+
+\begin{itemize}
+    \item \textbf{MovieLens}: Partial alignment (CLIP for text+image) combined with modality-specific encoders (VGGish for audio) achieves the best performance
+    \item \textbf{LastFM}: Disaligned embeddings generally outperform aligned alternatives, suggesting that preserving modality-specific feature spaces is beneficial for music recommendation
+\end{itemize}
+
+
+
+
 
 
 

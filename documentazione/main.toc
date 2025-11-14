@@ -1,47 +1,64 @@
-\contentsline {section}{\numberline {1}Introduction}{3}{}%
-\contentsline {subsection}{\numberline {1.1}Recommender Systems}{3}{}%
-\contentsline {subsection}{\numberline {1.2}Multimodal Recommender Systems}{4}{}%
-\contentsline {section}{\numberline {2}Aligned multimodal models}{6}{}%
-\contentsline {subsection}{\numberline {2.1}Contrastive Learning and AudioCLIP}{6}{}%
-\contentsline {subsubsection}{\numberline {2.1.1}Contrastive Learning}{6}{}%
-\contentsline {subsubsection}{\numberline {2.1.2}CLIP}{6}{}%
-\contentsline {subsubsection}{\numberline {2.1.3}AudioCLIP}{7}{}%
-\contentsline {subsection}{\numberline {2.2}Contrastive Learning arcitetures in Multimodal Recommender Systems}{8}{}%
-\contentsline {subsubsection}{\numberline {2.2.1}CLIP in Multimodal Recommender Systems}{8}{}%
-\contentsline {paragraph}{End-To-End Training}{9}{}%
-\contentsline {subsubsection}{\numberline {2.2.2}AudioCLIP in Multimodal Recommender Systems}{10}{}%
-\contentsline {section}{\numberline {3}Experimental Settings}{11}{}%
-\contentsline {subsection}{\numberline {3.1}Research Questions}{11}{}%
-\contentsline {subsection}{\numberline {3.2}Datasets}{11}{}%
-\contentsline {subsubsection}{\numberline {3.2.1}MovieLens 1M}{11}{}%
-\contentsline {subsubsection}{\numberline {3.2.2}LastFM}{11}{}%
-\contentsline {subsection}{\numberline {3.3}Multimodal Embedding Extraction Pipeline}{12}{}%
-\contentsline {subsubsection}{\numberline {3.3.1}Overview}{12}{}%
-\contentsline {subsubsection}{\numberline {3.3.2}File Organization and Naming Convention}{12}{}%
-\contentsline {subsubsection}{\numberline {3.3.3}Embedding Models}{13}{}%
-\contentsline {paragraph}{Aligned Multimodal Models}{13}{}%
-\contentsline {paragraph}{Modality-Specific Models}{13}{}%
-\contentsline {subsubsection}{\numberline {3.3.4}Extraction Process}{13}{}%
-\contentsline {paragraph}{Step 1: File Discovery and Alignment}{13}{}%
-\contentsline {paragraph}{Step 2: Audio Validation}{13}{}%
-\contentsline {paragraph}{Step 3: Extraction}{13}{}%
-\contentsline {subsubsection}{\numberline {3.3.5}Output Files}{14}{}%
-\contentsline {paragraph}{Embedding Arrays (NumPy format)}{14}{}%
-\contentsline {paragraph}{Metadata}{14}{}%
-\contentsline {subsection}{\numberline {3.4}Interaction Filtering and Remapping Pipeline}{14}{}%
-\contentsline {subsubsection}{\numberline {3.4.1}Common Pipeline Steps}{14}{}%
-\contentsline {subsubsection}{\numberline {3.4.2}MovieLens Mapping}{15}{}%
-\contentsline {paragraph}{Step 1: Loading Data}{15}{}%
-\contentsline {paragraph}{Step 2: Feature-Based Filtering}{15}{}%
-\contentsline {paragraph}{Step 3: 5-Core Filtering}{15}{}%
-\contentsline {paragraph}{Step 4: ID Remapping}{15}{}%
-\contentsline {paragraph}{Step 5: Embedding Reindexing}{16}{}%
-\contentsline {subsubsection}{\numberline {3.4.3}LastFM Mapping}{16}{}%
-\contentsline {paragraph}{Resolution Strategy: Artist-to-Track Expansion}{16}{}%
-\contentsline {paragraph}{Step 1: Loading Data}{16}{}%
-\contentsline {paragraph}{Step 2: Artist-to-Track Mapping and Expansion}{17}{}%
-\contentsline {paragraph}{Step 3--5: Standard Pipeline}{17}{}%
-\contentsline {section}{\numberline {4}Experiments}{18}{}%
-\contentsline {subsection}{\numberline {4.1}MovieLens\_1M}{18}{}%
-\contentsline {paragraph}{Feature extractors used}{18}{}%
-\contentsline {subsection}{\numberline {4.2}LastFM}{19}{}%
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Recommender Systems}{3}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Multimodal Recommender Systems}{4}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Aligned multimodal models}{6}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Contrastive Learning and AudioCLIP}{6}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Contrastive Learning}{6}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}CLIP}{6}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.3}AudioCLIP}{7}{subsubsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.2}Contrastive Learning arcitetures in Multimodal Recommender Systems}{8}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}CLIP in Multimodal Recommender Systems}{8}{subsubsection.2.2.1}%
+\contentsline {paragraph}{End-To-End Training}{9}{section*.7}%
+\contentsline {subsubsection}{\numberline {2.2.2}AudioCLIP in Multimodal Recommender Systems}{10}{subsubsection.2.2.2}%
+\contentsline {section}{\numberline {3}Experimental Settings}{11}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Research Questions}{11}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Datasets}{11}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}MovieLens 1M}{11}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}LastFM}{11}{subsubsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.3}Multimodal Embedding Extraction Pipeline}{12}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Overview}{12}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}File Organization and Naming Convention}{12}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Embedding Models}{13}{subsubsection.3.3.3}%
+\contentsline {paragraph}{Aligned Multimodal Models}{13}{section*.8}%
+\contentsline {paragraph}{Modality-Specific Models}{13}{section*.9}%
+\contentsline {subsubsection}{\numberline {3.3.4}Extraction Process}{13}{subsubsection.3.3.4}%
+\contentsline {paragraph}{Step 1: File Discovery and Alignment}{13}{section*.10}%
+\contentsline {paragraph}{Step 2: Extraction}{13}{section*.11}%
+\contentsline {subsection}{\numberline {3.4}Interaction Filtering and Remapping Pipeline}{13}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Common Pipeline Steps}{14}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}MovieLens Mapping}{14}{subsubsection.3.4.2}%
+\contentsline {paragraph}{Step 1: Loading Data}{14}{section*.12}%
+\contentsline {paragraph}{Step 2: Feature-Based Filtering}{14}{section*.13}%
+\contentsline {paragraph}{Step 3: 5-Core Filtering}{14}{section*.14}%
+\contentsline {paragraph}{Step 4: ID Remapping}{15}{section*.15}%
+\contentsline {paragraph}{Step 5: Embedding Reindexing}{15}{section*.16}%
+\contentsline {subsubsection}{\numberline {3.4.3}LastFM Mapping}{15}{subsubsection.3.4.3}%
+\contentsline {paragraph}{Resolution Strategy: Artist-to-Track Expansion}{15}{section*.17}%
+\contentsline {paragraph}{Step 1: Loading Data}{15}{section*.18}%
+\contentsline {paragraph}{Step 2: Artist-to-Track Mapping and Expansion}{16}{section*.19}%
+\contentsline {paragraph}{Step 3--5: Standard Pipeline}{16}{section*.20}%
+\contentsline {subsection}{\numberline {3.5}Data Distribution Extraction}{16}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {3.5.1}Overview}{16}{subsubsection.3.5.1}%
+\contentsline {subsubsection}{\numberline {3.5.2}UMAP Dimensionality Reduction}{16}{subsubsection.3.5.2}%
+\contentsline {paragraph}{Algorithm Overview}{17}{section*.21}%
+\contentsline {paragraph}{S1 Normalization}{17}{section*.22}%
+\contentsline {subsubsection}{\numberline {3.5.3}Density Estimation}{17}{subsubsection.3.5.3}%
+\contentsline {paragraph}{ 2D Gaussia Kernel Density Estimation (KDE) Overview}{17}{section*.23}%
+\contentsline {paragraph}{Angular KDE}{18}{section*.24}%
+\contentsline {section}{\numberline {4}Experiments}{19}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Data distribution}{19}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}MovieLens 1M}{20}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}LastFM}{26}{subsubsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}Results Overview}{29}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}MovieLens\_1M}{29}{subsubsection.4.2.1}%
+\contentsline {paragraph}{Feature extractors used}{29}{section*.38}%
+\contentsline {subsubsection}{\numberline {4.2.2}LastFM}{32}{subsubsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.3}Discussion}{33}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}MovieLens 1M: Performance Analysis}{33}{subsubsection.4.3.1}%
+\contentsline {paragraph}{Overall Performance Trends}{33}{section*.47}%
+\contentsline {paragraph}{AudioCLIP Anomaly}{34}{section*.48}%
+\contentsline {subsubsection}{\numberline {4.3.2}LastFM: Performance Analysis}{34}{subsubsection.4.3.2}%
+\contentsline {paragraph}{Overall Performance Trends}{34}{section*.49}%
+\contentsline {paragraph}{Alignment vs. Disalignment Trade-offs}{34}{section*.50}%
+\contentsline {subsubsection}{\numberline {4.3.3}Key Findings and Implications}{35}{subsubsection.4.3.3}%
+\contentsline {paragraph}{RQ1: Can aligned multimodal embeddings enhance recommendation performance?}{35}{section*.51}%
