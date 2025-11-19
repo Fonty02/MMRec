@@ -60,20 +60,46 @@ class FREEDOM(GeneralRecommender):
         if self.t_feat is not None:
             self.text_embedding = nn.Embedding.from_pretrained(self.t_feat, freeze=False)
             self.text_trs = nn.Linear(self.t_feat.shape[1], self.feat_embed_dim)
+        if self.a_feat is not None:
+            self.audio_embedding = nn.Embedding.from_pretrained(self.a_feat, freeze=False)
+            self.audio_trs = nn.Linear(self.a_feat.shape[1], self.feat_embed_dim)
 
         if os.path.exists(mm_adj_file):
             self.mm_adj = torch.load(mm_adj_file)
         else:
+            image_adj, text_adj, audio_adj = None, None, None
+            
             if self.v_feat is not None:
-                indices, image_adj = self.get_knn_adj_mat(self.image_embedding.weight.detach())
-                self.mm_adj = image_adj
+                _, image_adj = self.get_knn_adj_mat(self.image_embedding.weight.detach())
             if self.t_feat is not None:
-                indices, text_adj = self.get_knn_adj_mat(self.text_embedding.weight.detach())
-                self.mm_adj = text_adj
-            if self.v_feat is not None and self.t_feat is not None:
+                _, text_adj = self.get_knn_adj_mat(self.text_embedding.weight.detach())
+            if self.a_feat is not None:
+                _, audio_adj = self.get_knn_adj_mat(self.audio_embedding.weight.detach())
+
+            # Handle all combinations
+            if self.v_feat is not None and self.t_feat is not None and self.a_feat is not None:
+                # V + T + A
                 self.mm_adj = self.mm_image_weight * image_adj + (1.0 - self.mm_image_weight) * text_adj
-                del text_adj
-                del image_adj
+                self.mm_adj = self.mm_image_weight * self.mm_adj + (1.0 - self.mm_image_weight) * audio_adj
+            elif self.v_feat is not None and self.t_feat is not None:
+                # V + T
+                self.mm_adj = self.mm_image_weight * image_adj + (1.0 - self.mm_image_weight) * text_adj
+            elif self.v_feat is not None and self.a_feat is not None:
+                # V + A
+                self.mm_adj = self.mm_image_weight * image_adj + (1.0 - self.mm_image_weight) * audio_adj
+            elif self.t_feat is not None and self.a_feat is not None:
+                # T + A
+                self.mm_adj = self.mm_image_weight * text_adj + (1.0 - self.mm_image_weight) * audio_adj
+            elif self.v_feat is not None:
+                # Only V
+                self.mm_adj = image_adj
+            elif self.t_feat is not None:
+                # Only T
+                self.mm_adj = text_adj
+            elif self.a_feat is not None:
+                # Only A
+                self.mm_adj = audio_adj
+                
             torch.save(self.mm_adj, mm_adj_file)
 
     def get_knn_adj_mat(self, mm_embeddings):
@@ -201,14 +227,17 @@ class FREEDOM(GeneralRecommender):
 
         batch_mf_loss = self.bpr_loss(u_g_embeddings, pos_i_g_embeddings,
                                                                       neg_i_g_embeddings)
-        mf_v_loss, mf_t_loss = 0.0, 0.0
+        mf_v_loss, mf_t_loss,mf_a_loss = 0.0, 0.0,0.0
         if self.t_feat is not None:
             text_feats = self.text_trs(self.text_embedding.weight)
             mf_t_loss = self.bpr_loss(ua_embeddings[users], text_feats[pos_items], text_feats[neg_items])
         if self.v_feat is not None:
             image_feats = self.image_trs(self.image_embedding.weight)
             mf_v_loss = self.bpr_loss(ua_embeddings[users], image_feats[pos_items], image_feats[neg_items])
-        return batch_mf_loss + self.reg_weight * (mf_t_loss + mf_v_loss)
+        if self.a_feat is not None:
+            audio_feats = self.audio_trs(self.audio_embedding.weight)
+            mf_a_loss = self.bpr_loss(ua_embeddings[users], audio_feats[pos_items], audio_feats[neg_items])
+        return batch_mf_loss + self.reg_weight * (mf_t_loss + mf_v_loss + mf_a_loss)
 
     def full_sort_predict(self, interaction):
         user = interaction[0]

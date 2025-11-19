@@ -7,11 +7,8 @@ import os
 from utils.quick_start import quick_start
 
 os.environ['NUMEXPR_MAX_THREADS'] = '48'
-
-
-def main():
-    experiments = [
-        {
+"""
+{
             
             'name': 'New_LATTIC_text_minilm',
             'model': 'LATTICE',
@@ -67,6 +64,10 @@ def main():
                 'audio_feature_file': None,
             }
         },
+"""
+
+def main():
+    experiments = [
         
         {
             'name': 'New_LATTIC_audioclip_full',
