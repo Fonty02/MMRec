@@ -8,10 +8,10 @@ from utils.quick_start import quick_start
 
 os.environ['NUMEXPR_MAX_THREADS'] = '48'
 """
-{
+ {
             
-            'name': 'New_LATTIC_text_minilm',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_text_minilm',
+            'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
                 'gpu_id': 0,
@@ -20,9 +20,16 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
                 'audio_feature_file': None,   
             }
         },
+            
+
+"""
+
+def main():
+    experiments = [
+       
         {
-            'name': 'New_LATTIC_audio_vggish',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_audio_vggish',
+            'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
                 'gpu_id': 0,
@@ -32,8 +39,8 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
             }
         },
         {
-            'name': 'New_LATTIC_image_vit',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_image_vit',
+            'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
                 'gpu_id': 0,
@@ -43,8 +50,8 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
             }
         },
         {
-            'name': 'New_LATTIC_text_minilm_image_vit',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_text_minilm_image_vit',
+            'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
                 'gpu_id': 0,
@@ -54,8 +61,8 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
             }
         },
         {
-            'name': 'New_LATTIC_text_clip_image_clip',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_text_clip_image_clip',
+            'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
                 'gpu_id': 0,
@@ -64,14 +71,10 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
                 'audio_feature_file': None,
             }
         },
-"""
-
-def main():
-    experiments = [
         
         {
-            'name': 'New_LATTIC_audioclip_full',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_audioclip_full',
+            'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
                 'gpu_id': 0,
@@ -82,8 +85,8 @@ def main():
         },
         {
             
-            'name': 'New_LATTIC_text_minilm',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_text_minilm',
+            'model': 'FREEDOM',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -93,8 +96,8 @@ def main():
             }
         },
         {
-            'name': 'New_LATTIC_image_vit',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_image_vit',
+            'model': 'FREEDOM',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -104,8 +107,8 @@ def main():
             }
         },
         {
-            'name': 'New_LATTIC_text_minilm_image_vit',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_text_minilm_image_vit',
+            'model': 'FREEDOM',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -115,8 +118,8 @@ def main():
             }
         },
         {
-            'name': 'New_LATTIC_text_clip_image_clip',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_text_clip_image_clip',
+            'model': 'FREEDOM',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -127,8 +130,8 @@ def main():
         },
 
         {
-           'name': 'New_LATTIC_audioclip_full',
-            'model': 'LATTICE',
+           'name': 'FREEDOM_audioclip_full',
+            'model': 'FREEDOM',
             'dataset': 'lastfm',
             'config': {
                 'gpu_id': 0,
@@ -138,8 +141,8 @@ def main():
             }
         },
         {
-            'name': 'New_LATTIC_text_minilm_image_vit_audio_vggish',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_text_minilm_image_vit_audio_vggish',
+            'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
                 'gpu_id': 0,
@@ -149,8 +152,8 @@ def main():
             }
         },
         {
-            'name': 'New_LATTIC_text_clip_image_clip_audio_vggish',
-            'model': 'LATTICE',
+            'name': 'FREEDOM_text_clip_image_clip_audio_vggish',
+            'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
                 'gpu_id': 0,
@@ -174,7 +177,7 @@ def main():
         print(f"{'='*80}")
         print(f"Modello: {exp['model']}")
         print(f"Dataset: {exp['dataset']}")
-        if exp['model'] == 'LATTICE':
+        if exp['model'] == 'FREEDOM':
             print(f"Features:")
             print(f"  - Vision: {exp['config'].get('vision_feature_file', 'None')}")
             print(f"  - Text:   {exp['config'].get('text_feature_file', 'None')}")

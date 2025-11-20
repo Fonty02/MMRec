@@ -10,6 +10,6 @@ n_ui_layers: [2,3]
 knn_k: 10
 
 mm_image_weight: 0.1
-dropout: [0.8, 0.9]
+dropout: 0.8
 
-hyper_parameters: ["dropout", "reg_weight"]
+hyper_parameters: [ "reg_weight", "n_mm_layers", "n_ui_layers"]
