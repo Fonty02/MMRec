@@ -52,13 +52,13 @@
 \contentsline {subsection}{\numberline {4.2}Results Overview}{29}{subsection.4.2}%
 \contentsline {subsubsection}{\numberline {4.2.1}MovieLens\_1M}{29}{subsubsection.4.2.1}%
 \contentsline {paragraph}{Feature extractors used}{29}{section*.38}%
-\contentsline {subsubsection}{\numberline {4.2.2}LastFM}{32}{subsubsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.3}Discussion}{33}{subsection.4.3}%
-\contentsline {subsubsection}{\numberline {4.3.1}MovieLens 1M: Performance Analysis}{33}{subsubsection.4.3.1}%
-\contentsline {paragraph}{Overall Performance Trends}{33}{section*.47}%
-\contentsline {paragraph}{AudioCLIP Anomaly}{34}{section*.48}%
-\contentsline {subsubsection}{\numberline {4.3.2}LastFM: Performance Analysis}{34}{subsubsection.4.3.2}%
-\contentsline {paragraph}{Overall Performance Trends}{34}{section*.49}%
-\contentsline {paragraph}{Alignment vs. Disalignment Trade-offs}{34}{section*.50}%
-\contentsline {subsubsection}{\numberline {4.3.3}Key Findings and Implications}{35}{subsubsection.4.3.3}%
-\contentsline {paragraph}{RQ1: Can aligned multimodal embeddings enhance recommendation performance?}{35}{section*.51}%
+\contentsline {subsubsection}{\numberline {4.2.2}LastFM}{33}{subsubsection.4.2.2}%
+\contentsline {subsection}{\numberline {4.3}Discussion}{35}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}MovieLens 1M: Performance Analysis}{35}{subsubsection.4.3.1}%
+\contentsline {paragraph}{Overall Performance Trends}{35}{section*.47}%
+\contentsline {paragraph}{AudioCLIP Anomaly}{36}{section*.48}%
+\contentsline {subsubsection}{\numberline {4.3.2}LastFM: Performance Analysis}{36}{subsubsection.4.3.2}%
+\contentsline {paragraph}{Overall Performance Trends}{36}{section*.49}%
+\contentsline {paragraph}{Alignment vs. Disalignment Trade-offs}{36}{section*.50}%
+\contentsline {subsubsection}{\numberline {4.3.3}Key Findings and Implications}{37}{subsubsection.4.3.3}%
+\contentsline {paragraph}{RQ1: Can aligned multimodal embeddings enhance recommendation performance?}{37}{section*.51}%
