@@ -20,14 +20,7 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
                 'audio_feature_file': None,   
             }
         },
-            
-
-"""
-
-def main():
-    experiments = [
-       
-        {
+                {
             'name': 'FREEDOM_audio_vggish',
             'model': 'FREEDOM',
             'dataset': 'movielens_1m',
@@ -38,6 +31,16 @@ def main():
                 'audio_feature_file': 'audio_vggish.npy',
             }
         },
+            
+
+"""
+
+
+import torch
+print(f"Utilizzo device: {torch.cuda.get_device_name(0)}" if torch.cuda.is_available() else "CPU")
+
+def main():
+    experiments = [
         {
             'name': 'FREEDOM_image_vit',
             'model': 'FREEDOM',
