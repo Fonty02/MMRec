@@ -1,8 +1,8 @@
 \section{Aligned multimodal models}
 
-\subsection{Contrastive Learning and AudioCLIP}
+\subsection{Contrastive Learning}
 
-\subsubsection{Contrastive Learning}
+
 Contrastive Learning is self-supervised representation learning by training a model to differentiate between similar and dissimilar samples.\cite{ContrastiveLearning}. In few words, contrastive learning is a technique used to learn a feature space where similar samples are close together and dissimilar samples are far apart. To achieve this, a specific loss function known as \textbf{Contrastive Loss} is used:
 \begin{equation}
 \ell_{i,j} = -\log \frac{\exp(\text{sim}(z_i, z_j)/\tau)}{\sum_{k=1}^{2N} [k \neq i] \exp(\text{sim}(z_i, z_k)/\tau)},
@@ -88,4 +88,4 @@ The end-to-end fine-tuning procedure integrates the CLIP encoder directly into t
 
 This end-to-end strategy allows the CLIP encoder to adapt its visual and textual representations specifically to the recommendation task, leading to improved alignment between modalities and better overall recommendation performance.
 \subsubsection{AudioCLIP in Multimodal Recommender Systems}
-In literature there are no evidence of the use of AudioCLIP in multimodal recommender systems. Also, there no evidence of the use of CLIP + disaligned audio features in multimodal recommender systems
+In literature there are no evidence of the use of AudioCLIP in multimodal recommender systems. 

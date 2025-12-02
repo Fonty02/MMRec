@@ -2,10 +2,9 @@
 \contentsline {subsection}{\numberline {1.1}Recommender Systems}{3}{subsection.1.1}%
 \contentsline {subsection}{\numberline {1.2}Multimodal Recommender Systems}{4}{subsection.1.2}%
 \contentsline {section}{\numberline {2}Aligned multimodal models}{6}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Contrastive Learning and AudioCLIP}{6}{subsection.2.1}%
-\contentsline {subsubsection}{\numberline {2.1.1}Contrastive Learning}{6}{subsubsection.2.1.1}%
-\contentsline {subsubsection}{\numberline {2.1.2}CLIP}{6}{subsubsection.2.1.2}%
-\contentsline {subsubsection}{\numberline {2.1.3}AudioCLIP}{7}{subsubsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.1}Contrastive Learning}{6}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}CLIP}{6}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}AudioCLIP}{7}{subsubsection.2.1.2}%
 \contentsline {subsection}{\numberline {2.2}Contrastive Learning arcitetures in Multimodal Recommender Systems}{8}{subsection.2.2}%
 \contentsline {subsubsection}{\numberline {2.2.1}CLIP in Multimodal Recommender Systems}{8}{subsubsection.2.2.1}%
 \contentsline {paragraph}{End-To-End Training}{9}{section*.7}%
@@ -47,18 +46,23 @@
 \contentsline {paragraph}{Angular KDE}{18}{section*.24}%
 \contentsline {section}{\numberline {4}Experiments}{19}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Data distribution}{19}{subsection.4.1}%
-\contentsline {subsubsection}{\numberline {4.1.1}MovieLens 1M}{20}{subsubsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.2}LastFM}{26}{subsubsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.2}Results Overview}{29}{subsection.4.2}%
-\contentsline {subsubsection}{\numberline {4.2.1}MovieLens\_1M}{29}{subsubsection.4.2.1}%
-\contentsline {paragraph}{Feature extractors used}{29}{section*.38}%
-\contentsline {subsubsection}{\numberline {4.2.2}LastFM}{33}{subsubsection.4.2.2}%
-\contentsline {subsection}{\numberline {4.3}Discussion}{35}{subsection.4.3}%
-\contentsline {subsubsection}{\numberline {4.3.1}MovieLens 1M: Performance Analysis}{35}{subsubsection.4.3.1}%
-\contentsline {paragraph}{Overall Performance Trends}{35}{section*.47}%
-\contentsline {paragraph}{AudioCLIP Anomaly}{36}{section*.48}%
-\contentsline {subsubsection}{\numberline {4.3.2}LastFM: Performance Analysis}{36}{subsubsection.4.3.2}%
-\contentsline {paragraph}{Overall Performance Trends}{36}{section*.49}%
-\contentsline {paragraph}{Alignment vs. Disalignment Trade-offs}{36}{section*.50}%
-\contentsline {subsubsection}{\numberline {4.3.3}Key Findings and Implications}{37}{subsubsection.4.3.3}%
-\contentsline {paragraph}{RQ1: Can aligned multimodal embeddings enhance recommendation performance?}{37}{section*.51}%
+\contentsline {subsubsection}{\numberline {4.1.1}MovieLens 1M}{19}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}LastFM}{23}{subsubsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}Results Overview}{25}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}MovieLens\_1M}{26}{subsubsection.4.2.1}%
+\contentsline {paragraph}{Feature extractors used}{26}{section*.38}%
+\contentsline {subsubsection}{\numberline {4.2.2}LastFM}{30}{subsubsection.4.2.2}%
+\contentsline {section}{\numberline {5}Discussion}{33}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Data Distribution Analysis}{33}{subsection.5.1}%
+\contentsline {paragraph}{MovieLens 1M}{33}{section*.47}%
+\contentsline {paragraph}{LastFM}{33}{section*.48}%
+\contentsline {subsection}{\numberline {5.2}Performance Analysis}{33}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Model Comparison}{34}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Impact of Feature Alignment on MovieLens 1M}{34}{subsubsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.3}Impact of Feature Alignment on LastFM}{35}{subsubsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.4}The Role of Audio Modality}{35}{subsubsection.5.2.4}%
+\contentsline {section}{\numberline {6}Conclusion and Future Work}{36}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Summary of Findings}{36}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Future Work}{36}{subsection.6.2}%
+\contentsline {paragraph}{Refining Audio Alignment in RecSys}{36}{section*.49}%
+\contentsline {paragraph}{Domain-Adaptive Fusion Strategies}{37}{section*.50}%
