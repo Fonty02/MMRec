@@ -20,14 +20,7 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
                 'audio_feature_file': None,   
             }
         },
-            
-
-"""
-
-def main():
-    experiments = [
-       
-        {
+                {
             'name': 'FREEDOM_audio_vggish',
             'model': 'FREEDOM',
             'dataset': 'movielens_1m',
@@ -38,7 +31,8 @@ def main():
                 'audio_feature_file': 'audio_vggish.npy',
             }
         },
-        {
+
+         {
             'name': 'FREEDOM_image_vit',
             'model': 'FREEDOM',
             'dataset': 'movielens_1m',
@@ -69,18 +63,6 @@ def main():
                 'vision_feature_file': 'image_clip.npy',
                 'text_feature_file': 'text_clip.npy',
                 'audio_feature_file': None,
-            }
-        },
-        
-        {
-            'name': 'FREEDOM_audioclip_full',
-            'model': 'FREEDOM',
-            'dataset': 'movielens_1m',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_audioclip.npy',
-                'text_feature_file': 'text_audioclip.npy',
-                'audio_feature_file': 'audio_audioclip.npy',
             }
         },
         {
@@ -128,38 +110,35 @@ def main():
                 'audio_feature_file': None,
             }
         },
-
-        {
-           'name': 'FREEDOM_audioclip_full',
-            'model': 'FREEDOM',
-            'dataset': 'lastfm',
-            'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_audioclip.npy',
-                'text_feature_file': 'text_audioclip.npy',
-                'audio_feature_file': 'audio_audioclip.npy',
-            }
-        },
+            
         {
             'name': 'FREEDOM_text_minilm_image_vit_audio_vggish',
             'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
-                'gpu_id': 0,
+                'gpu_id': 1,
                 'vision_feature_file': 'image_vit.npy',
                 'text_feature_file': 'text_minilm.npy',
                 'audio_feature_file': 'audio_vggish.npy',
             }
         },
-        {
-            'name': 'FREEDOM_text_clip_image_clip_audio_vggish',
+"""
+
+
+import torch
+print(f"Utilizzo device: {torch.cuda.get_device_name(0)}" if torch.cuda.is_available() else "CPU")
+
+def main():
+    experiments = [
+           {
+            'name': 'FREEDOM_audioclip_full',
             'model': 'FREEDOM',
             'dataset': 'movielens_1m',
             'config': {
-                'gpu_id': 0,
-                'vision_feature_file': 'image_clip.npy',
-                'text_feature_file': 'text_clip.npy',
-                'audio_feature_file': 'audio_vggish.npy',
+                'gpu_id': 1,
+                'vision_feature_file': 'image_audioclip.npy',
+                'text_feature_file': 'text_audioclip.npy',
+                'audio_feature_file': 'audio_audioclip.npy',
             }
         },
     ]
