@@ -79,8 +79,7 @@ class FREEDOM(GeneralRecommender):
             # Handle all combinations
             if self.v_feat is not None and self.t_feat is not None and self.a_feat is not None:
                 # V + T + A
-                self.mm_adj = self.mm_image_weight * image_adj + (1.0 - self.mm_image_weight) * text_adj
-                self.mm_adj = self.mm_image_weight * self.mm_adj + (1.0 - self.mm_image_weight) * audio_adj
+                self.mm_adj = (image_adj + text_adj + audio_adj) / 3.0
             elif self.v_feat is not None and self.t_feat is not None:
                 # V + T
                 self.mm_adj = self.mm_image_weight * image_adj + (1.0 - self.mm_image_weight) * text_adj
@@ -126,23 +125,27 @@ class FREEDOM(GeneralRecommender):
         return torch.sparse.FloatTensor(indices, values, adj_size)
 
     def get_norm_adj_mat(self):
-        A = sp.dok_matrix((self.n_users + self.n_items,
-                           self.n_users + self.n_items), dtype=np.float32)
+        # Costruzione diretta come COO matrix per evitare segfault con dok_matrix
         inter_M = self.interaction_matrix
         inter_M_t = self.interaction_matrix.transpose()
-        data_dict = dict(zip(zip(inter_M.row, inter_M.col + self.n_users),
-                             [1] * inter_M.nnz))
-        data_dict.update(dict(zip(zip(inter_M_t.row + self.n_users, inter_M_t.col),
-                                  [1] * inter_M_t.nnz)))
-        for (row, col), value in data_dict.items():
-            A[row, col] = value
-        # norm adj matrix
-        sumArr = (A > 0).sum(axis=1)
-        # add epsilon to avoid Devide by zero Warning
-        diag = np.array(sumArr.flatten())[0] + 1e-7
-        diag = np.power(diag, -0.5)
+        
+        # Prepara righe, colonne e dati per la matrice COO
+        rows = np.concatenate([inter_M.row, inter_M_t.row + self.n_users])
+        cols = np.concatenate([inter_M.col + self.n_users, inter_M_t.col])
+        data = np.ones(len(rows), dtype=np.float32)
+        
+        # Costruisci direttamente come COO matrix
+        A = sp.coo_matrix((data, (rows, cols)), 
+                          shape=(self.n_users + self.n_items, self.n_users + self.n_items),
+                          dtype=np.float32)
+        # Converti a CSR per operazioni efficienti
+        A = A.tocsr()
+        
+        # norm adj matrix - calcola la somma delle righe direttamente
+        sumArr = np.array(A.sum(axis=1)).flatten() + 1e-7
+        diag = np.power(sumArr, -0.5)
         D = sp.diags(diag)
-        L = D * A * D
+        L = D @ A @ D
         # covert norm_adj matrix to tensor
         L = sp.coo_matrix(L)
         row = L.row
