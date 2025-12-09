@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+Reallocating 'name_of_file' (item size: 1) to 6 items.
+The style file: plain.bst
+Reallocating 'name_of_file' (item size: 1) to 25 items.
+Database file #1: ../documentazione/biblio.bib
+Warning--can't use both author and editor fields in Lops2011
+You've used 8 entries,
+            2118 wiz_defined-function locations,
+            560 strings with 5931 characters,
+and the built_in function-call counts, 3776 in all, are:
+= -- 365
+> -- 239
+< -- 4
++ -- 95
+- -- 86
+* -- 279
+:= -- 614
+add.period$ -- 27
+call.type$ -- 8
+change.case$ -- 65
+chr.to.int$ -- 0
+cite$ -- 9
+duplicate$ -- 142
+empty$ -- 236
+format.name$ -- 86
+if$ -- 799
+int.to.chr$ -- 0
+int.to.str$ -- 8
+missing$ -- 9
+newline$ -- 43
+num.names$ -- 16
+pop$ -- 70
+preamble$ -- 1
+purify$ -- 58
+quote$ -- 0
+skip$ -- 118
+stack$ -- 0
+substring$ -- 176
+swap$ -- 57
+text.length$ -- 4
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 30
+warning$ -- 1
+while$ -- 27
+width$ -- 9
+write$ -- 95
+(There was 1 warning)
