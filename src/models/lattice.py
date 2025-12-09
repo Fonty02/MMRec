@@ -104,7 +104,7 @@ class LATTICE(GeneralRecommender):
                 torch.save(audio_adj, audio_adj_file)
             self.audio_original_adj = audio_adj.cuda()
 
-        # Creazione layer di trasformazione per ciascuna modalità disponibile
+        # Creation of transformation layers for each available modality
         if self.v_feat is not None:
             self.image_trs = nn.Linear(self.v_feat.shape[1], self.feat_embed_dim)
         if self.t_feat is not None:
@@ -158,7 +158,7 @@ class LATTICE(GeneralRecommender):
         return torch.sparse.FloatTensor(indices, values, shape)
 
     def forward(self, adj, build_item_graph=False):
-        # Trasformazione features per ciascuna modalità disponibile
+        # Feature transformation for each available modality
         if self.v_feat is not None:
             image_feats = self.image_trs(self.image_embedding.weight)
         if self.t_feat is not None:
@@ -169,14 +169,14 @@ class LATTICE(GeneralRecommender):
         if build_item_graph:
             weight = self.softmax(self.modal_weight)
             
-            # Liste per accumulare le matrici di adiacenza
+            # Lists to accumulate adjacency matrices
             learned_adjs = []
             original_adjs = []
             
-            # Indice per i pesi
+            # Index for weights
             weight_idx = 0
             
-            # Costruzione matrice di adiacenza per ciascuna modalità disponibile
+            # Construction of adjacency matrix for each available modality
             if self.v_feat is not None:
                 self.image_adj = build_sim(image_feats)
                 self.image_adj = build_knn_neighbourhood(self.image_adj, topk=self.knn_k)

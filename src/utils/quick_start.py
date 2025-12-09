@@ -22,27 +22,27 @@ import torch
 
 def cleanup_gpu_memory():
     """
-    Pulisce la memoria GPU e CPU tra le run di iperparametri
-    Previene memory leaks e segmentation faults
+    Cleans GPU and CPU memory between hyperparameter runs
+    Prevents memory leaks and segmentation faults
     """
     try:
-        gc.collect()  # Garbage collection Python
+        gc.collect()  # Python garbage collection
         if torch.cuda.is_available():
-            torch.cuda.empty_cache()  # Svuota cache CUDA
-            torch.cuda.synchronize()  # Sincronizza con GPU
+            torch.cuda.empty_cache()  # Empty CUDA cache
+            torch.cuda.synchronize()  # Synchronize with GPU
     except Exception as e:
-        print(f"[WARNING] Errore durante cleanup GPU: {e}")
+        print(f"[WARNING] Error during GPU cleanup: {e}")
 
 
 def save_results_to_csv(config, best_valid_result, best_test_result, csv_filename):
     """
-    Salva SOLO i risultati del miglior modello in un file CSV
+    Saves ONLY the results of the best model to a CSV file
     """
-    print(f"\n[DEBUG] save_results_to_csv chiamata:")
+    print(f"\n[DEBUG] save_results_to_csv called:")
     print(f"  - best_valid_result: {best_valid_result}")
     print(f"  - best_test_result: {best_test_result}")
     
-    # Crea la directory reports se non esiste
+    # Create the reports directory if it doesn't exist
     reports_dir = os.path.join(os.path.dirname(os.path.dirname(os.getcwd())), 'reports')
     if not os.path.exists(reports_dir):
         reports_dir = os.path.join(os.getcwd(), 'reports')
@@ -51,17 +51,17 @@ def save_results_to_csv(config, best_valid_result, best_test_result, csv_filenam
     
     csv_path = os.path.join(reports_dir, csv_filename)
     
-    # Prepara le intestazioni
-    # Sempre includiamo il nome dell'esperimento e le colonne feature in modo
-    # che l'header del CSV sia consistente anche alla prima scrittura.
+    # Prepare the headers
+    # Always include the experiment name and feature columns so that
+    # the CSV header is consistent even on the first write.
     fieldnames = ['timestamp', 'experiment_name', 'model', 'dataset',
                   'vision_feature', 'text_feature', 'audio_feature']
     
-    # Aggiungi i nomi degli iperparametri
+    # Add hyperparameter names
     for param in config['hyper_parameters']:
         fieldnames.append(param)
     
-    # Aggiungi le metriche di validazione e test
+    # Add validation and test metrics
     valid_metrics = list(best_valid_result.keys())
     test_metrics = list(best_test_result.keys())
     
@@ -70,17 +70,17 @@ def save_results_to_csv(config, best_valid_result, best_test_result, csv_filenam
     for metric in test_metrics:
         fieldnames.append(f'test_{metric}')
     
-    # Scrivi i risultati nel CSV
+    # Write the results to CSV
     file_exists = os.path.isfile(csv_path)
     
     with open(csv_path, 'a', newline='') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         
-        # Scrivi l'header solo se il file è nuovo
+        # Write the header only if the file is new
         if not file_exists:
             writer.writeheader()
         
-        # Prepara la riga
+        # Prepare the row
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         row = {
             'timestamp': timestamp,
@@ -88,30 +88,30 @@ def save_results_to_csv(config, best_valid_result, best_test_result, csv_filenam
             'dataset': config['dataset']
         }
         
-        # Aggiungi configurazione feature (sempre presenti come colonne)
+        # Add feature configuration (always present as columns)
         row['experiment_name'] = config['experiment_name'] if config['experiment_name'] is not None else 'None'
         row['vision_feature'] = config['vision_feature_file'] if config['vision_feature_file'] is not None else 'None'
         row['text_feature'] = config['text_feature_file'] if config['text_feature_file'] is not None else 'None'
         row['audio_feature'] = config['audio_feature_file'] if config['audio_feature_file'] is not None else 'None'
         
-        # Aggiungi gli iperparametri migliori
-        # Gli iperparametri sono già stati impostati nel config durante il loop
+        # Add the best hyperparameters
+        # Hyperparameters are already set in config during the loop
         for param in config['hyper_parameters']:
             row[param] = config[param]
         
-        # Aggiungi le metriche di validazione
+        # Add validation metrics
         for metric, value in best_valid_result.items():
             row[f'valid_{metric}'] = value
         
-        # Aggiungi le metriche di test
+        # Add test metrics
         for metric, value in best_test_result.items():
             row[f'test_{metric}'] = value
         
         writer.writerow(row)
-        csvfile.flush()  # Forza la scrittura su disco
+        csvfile.flush()  # Force write to disk
     
-    # Log di conferma
-    print(f"✓ Risultati scritti in: {csv_path}")
+    # Confirmation log
+    print(f"✓ Results written to: {csv_path}")
     
     return csv_path
 
@@ -199,9 +199,9 @@ def quick_start(model, dataset, config_dict, save_model=True, mg=False):
         if 'trainer' in locals():
             del trainer
         
-        # Pulisci la memoria GPU e CPU
+        # Clean GPU and CPU memory
         cleanup_gpu_memory()
-        logger.debug(f'[Cleanup] Risorse liberate prima della prossima run')
+        logger.debug(f'[Cleanup] Resources freed before next run')
 
     # log info
     logger.info('\n============All Over=====================')
@@ -217,9 +217,9 @@ def quick_start(model, dataset, config_dict, save_model=True, mg=False):
 
     # ===== FINAL CLEANUP =====
     cleanup_gpu_memory()
-    logger.info('[Cleanup] Cleanup finale completato')
+    logger.info('[Cleanup] Final cleanup completed')
 
-    # Salva SOLO i risultati del miglior modello in CSV
+    # Save ONLY the results of the best model to CSV
     csv_filename = f"best_results_{config['model']}_{config['dataset']}.csv"
     best_valid_result = hyper_ret[best_test_idx][1]
     best_test_result = hyper_ret[best_test_idx][2]

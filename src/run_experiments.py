@@ -1,6 +1,6 @@
 #coding: utf-8
 """
-Script per eseguire tutti gli esperimenti configurati
+Script to run all configured experiments
 """
 
 import os
@@ -126,7 +126,7 @@ os.environ['NUMEXPR_MAX_THREADS'] = '48'
 
 
 import torch
-print(f"Utilizzo device: {torch.cuda.get_device_name(0)}" if torch.cuda.is_available() else "CPU")
+print(f"Using device: {torch.cuda.get_device_name(0)}" if torch.cuda.is_available() else "CPU")
 
 def main():
     experiments = [
@@ -146,27 +146,10 @@ def main():
     
     total_experiments = len(experiments)
     
-    print("="*80)
-    print(f"INIZIO ESECUZIONE {total_experiments} ESPERIMENTI")
-    print("="*80)
+
     
     for idx, exp in enumerate(experiments, 1):
-        print(f"\n{'='*80}")
-        print(f"ESPERIMENTO {idx}/{total_experiments}: {exp['name']}")
-        print(f"{'='*80}")
-        print(f"Modello: {exp['model']}")
-        print(f"Dataset: {exp['dataset']}")
-        if exp['model'] == 'FREEDOM':
-            print(f"Features:")
-            print(f"  - Vision: {exp['config'].get('vision_feature_file', 'None')}")
-            print(f"  - Text:   {exp['config'].get('text_feature_file', 'None')}")
-            print(f"  - Audio:  {exp['config'].get('audio_feature_file', 'None')}")
-        print(f"{'='*80}\n")
-        
         try:
-             #Esegui l'esperimento
-             #Passa anche il nome dell'esperimento dentro il config_dict in modo
-             #che venga registrato nei report CSV
             exp['config']['experiment_name'] = exp.get('name', None)
             quick_start(
                 model=exp['model'],
@@ -174,19 +157,11 @@ def main():
                 config_dict=exp['config'],
                 save_model=True
             )
-            print(f"\n✓ Esperimento {idx}/{total_experiments} completato con successo!")
             
         except Exception as e:
-            print(f"\n✗ Errore nell'esperimento {idx}/{total_experiments}: {e}")
-            print(f"   Continuo con il prossimo esperimento...")
+            print(f"\n Error in experiment {exp.get('name', 'N/A')}: {str(e)}")
             continue
     
-    print("\n" + "="*80)
-    print("TUTTI GLI ESPERIMENTI COMPLETATI!")
-    print("="*80)
-    print(f"\nRisultati salvati in: reports/best_results_*.csv")
-    print("="*80)
-
 
 if __name__ == '__main__':
     main()

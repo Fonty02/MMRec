@@ -35,13 +35,13 @@ embedding_files = {
     'image_clip': 'image_clip.npy',
     'text_clip': 'text_clip.npy',
     
-    # MiniLM (1 modalità)
+    # MiniLM (1 modality)
     'text_minilm': 'text_minilm.npy',
     
-    # Whisper (1 modalità)
+    # Whisper (1 modality)
     'audio_vggish': 'audio_vggish.npy',
     
-    # ViT (1 modalità)
+    # ViT (1 modality)
     'image_vit': 'image_vit.npy',
 }
 
@@ -75,7 +75,7 @@ valid_items = set(item_mapping['item_id'])
 print(f"\nItem con tutte e 3 le modalità (audio, immagini, testo): {len(valid_items)}")
 
 # ============================================
-# STEP 4: Filtra il dataset per includere solo valid_items
+# STEP 4: Filter the dataset to include only valid_items
 # ============================================
 filtered_df = inter_df[inter_df['itemID'].isin(valid_items)].copy()
 print(f"\nDopo filtro multimodale:")
