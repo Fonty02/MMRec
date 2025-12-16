@@ -77,12 +77,8 @@ Metrics include precision, recall, NDCG, etc.
 
 ## Preprocessing
 
-Preprocessing scripts are in `preprocessing/`. For example:
 
-- `0rating2inter.ipynb`: Convert ratings to interactions
-- `3feat-encoder.ipynb`: Encode features
-
-### Mapper scripts (mapping and feature reconstruction) 🔧
+### Mapper scripts (mapping and feature reconstruction) 
 
 There are two repository-local mapper scripts that prepare multimodal datasets by filtering, remapping IDs and rebuilding embedding files:
 
