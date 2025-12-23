@@ -2,4 +2,4 @@
 \beamer@sectionintoc {2}{Aligned Models}{6}{0}{2}
 \beamer@sectionintoc {3}{Experimental Settings}{10}{0}{3}
 \beamer@sectionintoc {4}{Experiments}{12}{0}{4}
-\beamer@sectionintoc {5}{Discussion \& Conclusion}{24}{0}{5}
+\beamer@sectionintoc {5}{Discussion \& Conclusion}{21}{0}{5}
