@@ -717,6 +717,22 @@ Our findings reveal that the effectiveness of feature alignment is highly domain
 \item \textbf{Model Performance:} Among the evaluated architectures, VBPR consistently demonstrated robustness and superior performance compared to more complex graph-based models like LATTICE and FREEDOM across most configurations. This conferms the result obtained by Zixuan Yi et al. \cite{CLIPRecSys} about LATTICE performance with aligned features
 \end{itemize}
 
+\subsection{Interplay between Model Complexity and Data Alignment}
+
+By cross-referencing the experimental results regarding model performance (Section 5.2) and data distribution analysis (Section 5.1), we can derive specific heuristics concerning the relationship between model choice and feature alignment. The findings suggest that the optimal configuration depends heavily on the intrinsic geometry of the domain data.
+
+\textbf{1. Data-Driven Strategy: Domain Semantics dictate Alignment.}
+When the dataset is characterized by strong semantic correlations between modalities (e.g., visual posters and textual descriptions in \textit{MovieLens 1M}), it is optimal to utilize \textbf{aligned features} (e.g., CLIP). In this context, the semantic overlap enhances the recommendation signal. However, when the domain is abstract or relies on high directional diversity (e.g., \textit{LastFM}), it is preferable to use \textbf{disaligned features}. In the latter case, forcing alignment smooths out the unique geometric nuances required to capture user preferences.
+
+\textbf{2. Model-Driven Strategy: Architecture implies Feature Requirements.}
+When employing robust, direct-projection architectures like \textbf{VBPR}, the system demonstrates high resilience and consistently outperforms more complex Graph Neural Networks (GNNs) like \textit{LATTICE} and \textit{FREEDOM} across most configurations Consequently:
+\begin{itemize}
+    \item If the chosen model is a complex GNN (e.g., LATTICE), it is crucial to avoid aggressively aligned data (such as \textit{AudioCLIP}). The "feature collapse" observed in fully aligned spaces deprives the graph convolution layers of the necessary discriminative variance, leading to inferior performance compared to simpler models.
+    \item Conversely, if the data representation is naturally disaligned or preserves high geometric diversity, a simpler model like VBPR is sufficient to exploit these features effectively, rendering the additional computational complexity of GNNs unnecessary.
+\end{itemize}
+
+In summary, increased model complexity does not compensate for poor feature representation. Instead, simpler models combined with domain-appropriate feature alignment (aligned for semantic, disaligned for abstract) yield the superior performance.
+
 \subsection{Future Work}
 Based on the limitations and insights observed in this study, several directions for future research emerge:
 

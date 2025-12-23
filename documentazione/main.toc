@@ -63,6 +63,7 @@
 \contentsline {subsubsection}{\numberline {5.2.4}The Role of Audio Modality}{35}{subsubsection.5.2.4}%
 \contentsline {section}{\numberline {6}Conclusion and Future Work}{36}{section.6}%
 \contentsline {subsection}{\numberline {6.1}Summary of Findings}{36}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Future Work}{36}{subsection.6.2}%
-\contentsline {paragraph}{Refining Audio Alignment in RecSys}{36}{section*.49}%
-\contentsline {paragraph}{Domain-Adaptive Fusion Strategies}{37}{section*.50}%
+\contentsline {subsection}{\numberline {6.2}Interplay between Model Complexity and Data Alignment}{36}{subsection.6.2}%
+\contentsline {subsection}{\numberline {6.3}Future Work}{37}{subsection.6.3}%
+\contentsline {paragraph}{Refining Audio Alignment in RecSys}{37}{section*.49}%
+\contentsline {paragraph}{Domain-Adaptive Fusion Strategies}{38}{section*.50}%
