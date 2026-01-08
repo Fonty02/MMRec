@@ -12,6 +12,13 @@
 % --- NEW PACKAGES FOR HIGHLIGHTING ---
 \usepackage{colortbl}
 \usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+% --- FORZARE I BLOCCHI ROSSI ---
+% Imposta il titolo del blocco su rosso scuro con testo bianco
+\setbeamercolor{block title}{bg=red!80!black,fg=white}
+% Imposta il corpo del blocco su un rosso molto chiaro con testo nero
+\setbeamercolor{block body}{bg=red!5,fg=black}
 \definecolor{lightgreen}{RGB}{220, 255, 220}
 \newcommand{\best}[1]{\textbf{\textcolor{red!80!black}{#1}}} % Highlights best numbers
 \newcommand{\bestrow}{\rowcolor{lightgreen}} % Highlights best rows
@@ -61,9 +68,15 @@
   \end{itemize}
   \begin{figure}[h]
     \centering
-    \includegraphics[height=0.4\textheight]{../documentazione/img/MMRec.png}
-    \caption{Example of a Multimodal Recommender System}
+    \includegraphics[height=0.4\textheight]{img/StarWars.jpg}
+    \caption{Example of multimodal data for a movie (Star Wars)}
   \end{figure}
+\end{frame}
+
+
+\begin{frame}{Motivation \& Problem Statement}
+  
+    Traditionally, MMRec systems extract features using independent encoders (e.g., BERT for text, ResNet for images). In other domains, like Few-Shot Learning for Image Classification, aligned features (CLIP) have shown superior performance with respect to disaligned ones.
 \end{frame}
 
 % ------------------------- Aligned Models -------------------------
@@ -119,13 +132,69 @@
 % ------------------------- Experimental Settings -------------------------
 \section{Experimental Settings}
 
-\begin{frame}{Research Question}
+\begin{frame}{Pipeline}
     \centering
-    \Large
-    \textbf{RQ1:} \\
-    \vspace{0.5em}
-    Can the integration of \textit{aligned} multimodal embeddings (text, image, audio) enhance the performance of recommender systems compared to unimodal or non-aligned approaches?
+    \begin{tikzpicture}[
+      node distance=0.6cm and 0.6cm,
+      auto,
+      % STILI (Tema Rosso)
+      block/.style={
+        rectangle, 
+        draw=red!80!black, 
+        fill=red!10, 
+        text width=6.5em, 
+        text centered, 
+        rounded corners, 
+        minimum height=3.5em,
+        font=\small
+      },
+      line/.style={draw, -latex, thick},
+      % Stile per il blocco finale che contiene più testo
+      wideblock/.style={
+        block,
+        text width=10em
+      }
+    ]
+
+      % --- RIGA 1 (Sinistra -> Destra) ---
+      \node [block] (discovery) {File Discovery \& Alignment};
+      \node [block, right=of discovery] (validation) {Validation \& Filtering};
+      \node [block, right=of validation] (extraction) {Embedding Extraction};
+
+      % --- RIGA 2 (Destra -> Sinistra) ---
+      \node [block, below=of extraction] (consistency) {Strict Consistency};
+      \node [block, left=of consistency] (output) {Aligned .npy Output};
+      
+      % POSIZIONAMENTO MODIFICATO: A sinistra dell'output (Tradotto)
+      \node [block, left=of output] (analysis) {Data Distribution Analysis};
+
+      % --- RIGA 3 (Sotto) ---
+      % POSIZIONAMENTO MODIFICATO: Sotto l'analisi (Tradotto)
+      \node [wideblock, below=of analysis] (training) {MMRec Model Training \& Evaluation};
+
+      % --- FRECCE ---
+      \path [line] (discovery) -- (validation);
+      \path [line] (validation) -- (extraction);
+      \path [line] (extraction) -- (consistency); % Scende
+      \path [line] (consistency) -- (output);    % Va a sinistra
+      \path [line] (output) -- (analysis);       % Va a sinistra
+      \path [line] (analysis) -- (training);     % Scende
+      
+    \end{tikzpicture}
 \end{frame}
+
+\begin{frame}{Research Questions}
+
+      \begin{block}{RQ1: Qualitative Analysis (Geometry)}
+        How does the alignment process (e.g., CLIP, AudioCLIP) affect the geometric distribution of the feature space?
+    \end{block}
+
+    \begin{block}{RQ2: Quantitative Analysis (Performance)}
+        Can the integration of \textit{aligned} multimodal embeddings (text, image, audio) enhance recommendation accuracy compared to unimodal or non-aligned approaches?
+    \end{block}
+\end{frame}
+    
+
 
 \begin{frame}{Datasets Overview}
   \textbf{Challenge:} Dealing with different structural levels of multimodal data.
@@ -157,6 +226,28 @@
     \item \textbf{LATTICE:} GNN that mines latent structures between items.
     \item \textbf{FREEDOM:} GNN with modality-specific encoders and attention fusion.
   \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Evaluation Protocol}
+  \begin{columns}
+      \begin{column}{0.5\textwidth}
+          \textbf{Metrics Evaluated:}
+          \begin{itemize}
+              \item \textbf{Recall@k}
+              \item \textbf{NDCG@k}
+              \item \textbf{Precision@k}
+              \item \textbf{MAP@k}
+          \end{itemize}
+      \end{column}
+      \begin{column}{0.5\textwidth}
+          \textbf{Experimental Settings:}
+          \begin{itemize}
+              \item \textbf{Cut-offs ($k$):} \\ $k \in \{5, 10, 20, 50\}$
+              \item \textbf{Filtering:} 5-core filtering applied to ensure interaction density.
+          \end{itemize}
+      \end{column}
+  \end{columns}
 \end{frame}
 
 % ------------------------- Experiments -------------------------

@@ -23,7 +23,7 @@
 \contentsline {subsubsection}{\numberline {3.3.4}Extraction Process}{13}{subsubsection.3.3.4}%
 \contentsline {paragraph}{Step 1: File Discovery and Alignment}{13}{section*.10}%
 \contentsline {paragraph}{Step 2: Extraction}{13}{section*.11}%
-\contentsline {subsection}{\numberline {3.4}Interaction Filtering and Remapping Pipeline}{13}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.4}Interaction Filtering and Remapping Pipeline}{14}{subsection.3.4}%
 \contentsline {subsubsection}{\numberline {3.4.1}Common Pipeline Steps}{14}{subsubsection.3.4.1}%
 \contentsline {subsubsection}{\numberline {3.4.2}MovieLens Mapping}{14}{subsubsection.3.4.2}%
 \contentsline {paragraph}{Step 1: Loading Data}{14}{section*.12}%
