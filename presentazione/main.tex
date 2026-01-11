@@ -1,19 +1,33 @@
 \documentclass{beamer}
 \usetheme{Madrid}
-\usecolortheme{whale}
+\usecolortheme{beaver}
 \usepackage[utf8]{inputenc}
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{adjustbox}
 \usepackage{hyperref}
 \usepackage{bibentry}
+\usepackage{twemojis}
+
+% --- NEW PACKAGES FOR HIGHLIGHTING ---
+\usepackage{colortbl}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+% --- FORZARE I BLOCCHI ROSSI ---
+% Imposta il titolo del blocco su rosso scuro con testo bianco
+\setbeamercolor{block title}{bg=red!80!black,fg=white}
+% Imposta il corpo del blocco su un rosso molto chiaro con testo nero
+\setbeamercolor{block body}{bg=red!5,fg=black}
+\definecolor{lightgreen}{RGB}{220, 255, 220}
+\newcommand{\best}[1]{\textbf{\textcolor{red!80!black}{#1}}} % Highlights best numbers
+\newcommand{\bestrow}{\rowcolor{lightgreen}} % Highlights best rows
 
 \title[MMRec: Aligned vs Disaligned features]{Exploring Aligned and Disaligned Multimodal Features in Recommender Systems}
 \author{Emanuele Fontana}
 \date{\today}
 
 \begin{document}
-
 
 \begin{frame}
   \titlepage
@@ -54,220 +68,344 @@
   \end{itemize}
   \begin{figure}[h]
     \centering
-    \includegraphics[height=0.4\textheight]{../documentazione/img/MMRec.png}
-    \caption{Example of a Multimodal Recommender System}
+    \includegraphics[height=0.4\textheight]{img/StarWars.jpg}
+    \caption{Example of multimodal data for a movie (Star Wars)}
   \end{figure}
 \end{frame}
 
-%\begin{frame}{MMRec Dataset extensions}
-  %\begin{itemize}
-  %  \item Multimodal extensions for MovieLens-1M and LastFM: additional text, images, audio and video were collected and encoded to create aligned and disaligned feature sets \cite{Spillong}
-  %  \item These datasets enable full multimodal benchmarking and allow to assess the impact of alignment across domains
-  %\end{itemize}
-%\end{frame}
+
+\begin{frame}{Motivation \& Problem Statement}
+  
+    Traditionally, MMRec systems extract features using independent encoders (e.g., BERT for text, ResNet for images). In other domains, like Few-Shot Learning for Image Classification, aligned features (CLIP) have shown superior performance with respect to disaligned ones.
+\end{frame}
 
 % ------------------------- Aligned Models -------------------------
 \section{Aligned Models}
 \begin{frame}{Contrastive Learning}
-  \begin{itemize}
-    \item Self-supervised method learning representations that bring similar samples closer \cite{ContrastiveLearning}
-    \item Contrastive loss: $\ell_{i,j} = -\log \frac{\exp(\text{sim}(z_i, z_j)/\tau)}{\sum_{k=1}^{2N} [k \neq i] \exp(\text{sim}(z_i, z_k)/\tau)}$
-  \end{itemize}
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.4\textwidth]{../documentazione/img/CLearning.png}
-    \caption{Conceptual representation of Contrastive Learning}
-  \end{figure}
+  \begin{columns}
+      \begin{column}{0.6\textwidth}
+          \begin{itemize}
+            \item Self-supervised method: learns representations that bring similar samples closer \cite{ContrastiveLearning}
+            \item \textbf{Goal:} Minimize distance between positive pairs, maximize distance between negative pairs.
+            \item Contrastive loss: 
+            $$ \ell_{i,j} = -\log \frac{\exp(\text{sim}(z_i, z_j)/\tau)}{\sum_{k=1}^{2N} [k \neq i] \exp(\text{sim}(z_i, z_k)/\tau)} $$
+          \end{itemize}
+      \end{column}
+      \begin{column}{0.4\textwidth}
+          \begin{figure}[h]
+            \centering
+            \includegraphics[width=\textwidth]{../documentazione/img/CLearning.png}
+          \end{figure}
+      \end{column}
+  \end{columns}
 \end{frame}
 
-\begin{frame}{CLIP}
+\begin{frame}{CLIP (Contrastive Language-Image Pre-training)}
   \begin{itemize}
-    \item CLIP aligns image and text embeddings in a shared space (OpenAI) \cite{CLIP}
-    \item Recent work shows that large multimodal encoders like CLIP can effectively improve recommender system performance when fine-tuned appropriately \cite{CLIPRecSys}
+    \item Aligns image and text embeddings in a shared space (OpenAI) \cite{CLIP}
+    \item \textbf{Relevance:} Large multimodal encoders like CLIP can improve performance when fine-tuned end-to-end \cite{CLIPRecSys}
   \end{itemize}
   \begin{figure}[h]
     \centering
     \includegraphics[height=0.4\textheight]{../documentazione/img/CLIP.png}
-    \caption{Conceptual representation of CLIP architecture}
+    \caption{CLIP aligns visual and textual concepts}
   \end{figure}
 \end{frame}
 
 \begin{frame}{AudioCLIP}
   \begin{itemize}
-    \item Extends CLIP by adding an audio encoder (ESResNeXt) to the tri-modal alignment \cite{AudioCLIP}
-    \item Training: audio-head pretrain, cooperative distillation, full tri-modal fine-tuning on AudioSet
+    \item Extends CLIP by adding an \textbf{audio encoder} (ESResNeXt) \cite{AudioCLIP}
+    \item \textbf{Training process:}
+    \begin{enumerate}
+        \item Audio-head pre-training
+        \item Cooperative distillation (aligning audio to frozen CLIP space)
+        \item Full tri-modal fine-tuning on AudioSet
+    \end{enumerate}
   \end{itemize}
   \begin{figure}[h]
     \centering
     \includegraphics[height=0.3\textheight]{../documentazione/img/AudioCLIP.png}
-    \caption{Conceptual representation of AudioCLIP architecture}
+    \caption{Tri-modal alignment in AudioCLIP}
   \end{figure}
 \end{frame}
 
 % ------------------------- Experimental Settings -------------------------
 \section{Experimental Settings}
-\begin{frame}{Research Questions and Datasets}
-  \textbf{RQ1:} Can aligned multimodal embeddings improve recommender performance?
+
+\begin{frame}{Pipeline}
+    \centering
+    \begin{tikzpicture}[
+      node distance=0.6cm and 0.6cm,
+      auto,
+      % STILI (Tema Rosso)
+      block/.style={
+        rectangle, 
+        draw=red!80!black, 
+        fill=red!10, 
+        text width=6.5em, 
+        text centered, 
+        rounded corners, 
+        minimum height=3.5em,
+        font=\small
+      },
+      line/.style={draw, -latex, thick},
+      % Stile per il blocco finale che contiene più testo
+      wideblock/.style={
+        block,
+        text width=10em
+      }
+    ]
+
+      % --- RIGA 1 (Sinistra -> Destra) ---
+      \node [block] (discovery) {File Discovery \& Alignment};
+      \node [block, right=of discovery] (validation) {Validation \& Filtering};
+      \node [block, right=of validation] (extraction) {Embedding Extraction};
+
+      % --- RIGA 2 (Destra -> Sinistra) ---
+      \node [block, below=of extraction] (consistency) {Strict Consistency};
+      \node [block, left=of consistency] (output) {Aligned .npy Output};
+      
+      % POSIZIONAMENTO MODIFICATO: A sinistra dell'output (Tradotto)
+      \node [block, left=of output] (analysis) {Data Distribution Analysis};
+
+      % --- RIGA 3 (Sotto) ---
+      % POSIZIONAMENTO MODIFICATO: Sotto l'analisi (Tradotto)
+      \node [wideblock, below=of analysis] (training) {MMRec Model Training \& Evaluation};
+
+      % --- FRECCE ---
+      \path [line] (discovery) -- (validation);
+      \path [line] (validation) -- (extraction);
+      \path [line] (extraction) -- (consistency); % Scende
+      \path [line] (consistency) -- (output);    % Va a sinistra
+      \path [line] (output) -- (analysis);       % Va a sinistra
+      \path [line] (analysis) -- (training);     % Scende
+      
+    \end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Research Questions}
+
+      \begin{block}{RQ1: Qualitative Analysis (Geometry)}
+        How does the alignment process (e.g., CLIP, AudioCLIP) affect the geometric distribution of the feature space?
+    \end{block}
+
+    \begin{block}{RQ2: Quantitative Analysis (Performance)}
+        Can the integration of \textit{aligned} multimodal embeddings (text, image, audio) enhance recommendation accuracy compared to unimodal or non-aligned approaches?
+    \end{block}
+\end{frame}
+    
+
+
+\begin{frame}{Datasets Overview}
+  \textbf{Challenge:} Dealing with different structural levels of multimodal data.
+  
+  \begin{table}[]
+    \centering
+    \small
+    \begin{tabular}{l p{4cm} p{4cm}}
+        \toprule
+        \textbf{Feature} & \textbf{MovieLens 1M} & \textbf{LastFM} \\
+        \midrule
+        \textbf{Domain} & Movies & Music \\
+        \textbf{Interactions} & User-Movie (Explicit Rating) & User-Artist (Implicit Listen) \\
+        \textbf{MM Level} & \textbf{Item Level} (Movie) & \textbf{\alert{Track Level} (Sub-Item)} \\
+        \textbf{Modalities} & Posters, Trailers, Plots & Audio, Covers, Metadata \\
+        \textbf{Pipeline} & Direct Mapping & \textbf{Artist-to-Track Expansion} \\
+        \bottomrule
+    \end{tabular}
+    \caption{Comparison of datasets and processing strategies}
+  \end{table}
+\end{frame}
+
+\begin{frame}{Models Evaluated}
+  We compared performance across simpler projection models and complex Graph Neural Networks:
+  \vspace{1em}
   \begin{itemize}
-    \item MovieLens 1M: movies with posters, trailers (audio), and text descriptions
-    \item LastFM: artist-level interactions, track-level multimodal features (images, audio, text)
+    \item \textbf{BPR (Baseline):} Bayesian Personalized Ranking (ID-only).
+    \item \textbf{VBPR:} Visual BPR extended to support multimodal features (projection-based).
+    \item \textbf{LATTICE:} GNN that mines latent structures between items.
+    \item \textbf{FREEDOM:} GNN with modality-specific encoders and attention fusion.
   \end{itemize}
 \end{frame}
-%
-%\begin{frame}{Embedding Extraction Pipeline}
- % \begin{enumerate}
-  %  \item File discovery and strict alignment across modalities
-   % \item Extraction using both aligned (CLIP, AudioCLIP) and modality-specific (ViT, MiniLM, VGGish) encoders
-    %\item 5-core filtering and ID remapping
-  %\end{enumerate}
-%\end{frame}
-%
+
+
+\begin{frame}{Evaluation Protocol}
+  \begin{columns}
+      \begin{column}{0.5\textwidth}
+          \textbf{Metrics Evaluated:}
+          \begin{itemize}
+              \item \textbf{Recall@k}
+              \item \textbf{NDCG@k}
+              \item \textbf{Precision@k}
+              \item \textbf{MAP@k}
+          \end{itemize}
+      \end{column}
+      \begin{column}{0.5\textwidth}
+          \textbf{Experimental Settings:}
+          \begin{itemize}
+              \item \textbf{Cut-offs ($k$):} \\ $k \in \{5, 10, 20, 50\}$
+              \item \textbf{Filtering:} 5-core filtering applied to ensure interaction density.
+          \end{itemize}
+      \end{column}
+  \end{columns}
+\end{frame}
+
 % ------------------------- Experiments -------------------------
 \section{Experiments}
-\begin{frame}{Embedding distribution technique}
+\begin{frame}{Embedding Distribution Analysis (UMAP + KDE)}
+  To understand \textit{why} models perform differently, we analyzed the geometric structure of the embeddings.
+  \vspace{1em}
   \begin{itemize}
-    \item UMAP (Uniform Manifold Approximation and Projection) is used to reduce high-dimensional embeddings to 2D preserving local/global structure.
-    \item After UMAP, we center and S1-normalize points: $\mathbf{x}_i' = \mathbf{x}_i - \bar{\mathbf{x}}$, $\mathbf{x}_i'' = \frac{\mathbf{x}_i'}{\|\mathbf{x}_i'\|}$.
-    \item Spatial density: 2D Gaussian Kernel Density Estimation (KDE) on the projected points.
+    \item \textbf{Technique:} UMAP projection to 2D $\rightarrow$ S1 Normalization (Unit Circle) $\rightarrow$ Gaussian KDE.
+    \item \textbf{What to look for:}
+    \begin{itemize}
+        \item \textit{Uniformity:} Do features cover the space?
+        \item \textit{Peaks:} Distinct peaks indicate specific feature orientations.
+        \item \textit{Collapse:} Overlapping distributions imply loss of modality-specific signal.
+    \end{itemize}
   \end{itemize}
 \end{frame}
-\begin{frame}{MovieLens 1M: CLIP-aligned Text+Image}
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_clip_image_clip_kde.png}
-    \vspace{2mm}
-  \end{figure}
+
+\begin{frame}{MovieLens 1M: Aligned vs Disaligned}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \textbf{Disaligned (MiniLM+ViT)}
+            \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_minilm_image_vit_kde.png}
+            \small{\textcolor{green!60!black}{Distinct feature spaces preserve complementary info.}}
+        \end{column}
+        \begin{column}{0.5\textwidth}
+            \centering
+            \textbf{CLIP Aligned (Text+Image)}
+            \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_clip_image_clip_kde.png}
+            \small{\textcolor{blue}{Semantic alignment bridges modalities without collapse.}}
+        \end{column}
+    \end{columns}
+    \vspace{1em}
+    \begin{itemize}
+        \item \textbf{Disaligned:} Features maintain specific orientations, capturing different aspects of user preference (e.g., visual style vs. narrative).
+        \item \textbf{CLIP Aligned:} Successfully brings Text and Image closer semantically while maintaining enough structural diversity to be discriminative (Best Performance).
+    \end{itemize}
 \end{frame}
 
-\begin{frame}{MovieLens 1M: AudioCLIP aligned (Text+Image+Audio)}
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_audioclip_full_kde.png}
-    \vspace{2mm}
-   
-  \end{figure}
+\begin{frame}{The "AudioCLIP Anomaly"}
+  \begin{columns}
+    % Colonna Sinistra: Disaligned
+    \begin{column}{0.5\textwidth}
+       \centering
+       \textbf{Disaligned (Rich Signal)}
+       \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_minilm_image_vit_audio_vggish_kde.png}
+       \small{\textcolor{green!60!black}{Modality-specific distributions cover the manifold.}}
+    \end{column}
+
+    % Colonna Destra: AudioCLIP
+    \begin{column}{0.5\textwidth}
+       \centering
+       \textbf{AudioCLIP (Over-Aligned)}
+       \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_audioclip_full_kde.png}
+       \small{\textcolor{red}{Aggressive alignment.}}
+    \end{column}
+  \end{columns}
+
+  \vspace{1em}
+  \begin{block}{Why does alignment fail here?}
+    \begin{itemize}
+        \item \textbf{Loss of Nuance:} By forcing all three modalities (Text, Image, Audio) into the exact same space too aggressively, the model loses the rich multimodal signal
+    \end{itemize}
+  \end{block}
 \end{frame}
 
-\begin{frame}{MovieLens 1M: Disaligned Text+Image+Audio (MiniLM+ViT+VGGish)}
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_minilm_image_vit_audio_vggish_kde.png}
-    \vspace{2mm}
+% --- QUANTITATIVE RESULTS ---
 
-  \end{figure}
-\end{frame}
-
-\begin{frame}{LastFM: Disaligned Text+Image (MiniLM + ViT)}
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../data/reports/experiment_plots/lastfm_LATTICE_text_minilm_image_vit_kde.png}
-    \vspace{2mm}
-
-  \end{figure}
-\end{frame}
-
-\begin{frame}{LastFM: CLIP Text+Image aligned}
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../data/reports/experiment_plots/lastfm_LATTICE_text_clip_image_clip_kde.png}
-    \vspace{2mm}
-
-  \end{figure}
-\end{frame}
-
-\begin{frame}{LastFM: AudioCLIP aligned (Text+Image+Audio)}
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.95\textwidth]{../data/reports/experiment_plots/lastfm_LATTICE_audioclip_full_kde.png}
-    \vspace{2mm}
-  \end{figure}
-\end{frame}
-
-\begin{frame}{Quantitative comparison: MovieLens (k=5)}
+\begin{frame}{Quantitative Results: MovieLens 1M (k=10)}
+  \textit{VBPR with CLIP features generally outperforms others. AudioCLIP underperforms.}
   \begin{table}[h]
     \centering
-    \begin{tabular}{lcc}
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{lcccc}
     	\toprule
-    Model & rec@5 & ndcg@5 \\
+    Model & Rec@10 & NDCG@10 & Prec@10 & MAP@10 \\
     \midrule
-    VBPR (Text - MiniLM) & \textbf{0.1144} & \textbf{0.2196} \\
-    LATTICE\_1 (Text - MiniLM) & 0.1131 & 0.2169 \\
-    FREEDOM (Text - MiniLM) & 0.1133 & 0.2173 \\
+    BPR & 0.1776 & 0.2159 & 0.1631 & 0.1120 \\
+    \bestrow VBPR (CLIP) & \best{0.1911} & \best{0.2300} & \best{0.1745} & \best{0.1211} \\
+    VBPR (AudioCLIP) & 0.1570 & 0.1922 & 0.1476 & 0.0969 \\
+    VBPR (Disaligned) & 0.1876 & 0.2271 & 0.1718 & 0.1195 \\
+    \midrule
+    LATTICE\_3 (CLIP) & 0.1877 & 0.2275 & 0.1721 & 0.1198 \\
+    LATTICE\_3 (Disaligned) & 0.1848 & 0.2257 & 0.1710 & 0.1183 \\
+    \midrule
+    FREEDOM (CLIP) & 0.1796 & 0.2211 & 0.1657 & 0.1158 \\
+    FREEDOM (AudioCLIP) & 0.1844 & 0.2259 & 0.1688 & 0.1193 \\
     \bottomrule
     \end{tabular}
-    \caption{MovieLens 1M - Comparison at cutoff k=5 (Text features)}
+    }
+    \caption{MovieLens 1M results. \textbf{VBPR (CLIP)} achieves state-of-the-art.}
   \end{table}
 \end{frame}
 
-\begin{frame}{Quantitative comparison: MovieLens (k=10)}
+\begin{frame}{Quantitative Results: LastFM (k=10)}
+  \textit{In music domain, disaligned features preserve distinct signals better.}
   \begin{table}[h]
     \centering
-    \begin{tabular}{lcc}
+    \resizebox{\textwidth}{!}{
+    \begin{tabular}{lcccc}
     	\toprule
-    Model & rec@10 & ndcg@10 \\
+    Model & Rec@10 & NDCG@10 & Prec@10 & MAP@10 \\
     \midrule
-    VBPR (Text - MiniLM) & \textbf{0.1877} & \textbf{0.2269} \\
-    LATTICE\_1 (Text - MiniLM) & 0.1848 & 0.2238 \\
-    FREEDOM (Text - MiniLM) & 0.1836 & 0.2238 \\
+    BPR & 0.1132 & 0.1534 & 0.1404 & 0.1061 \\
+    VBPR (CLIP) & 0.1222 & 0.1646 & 0.1488 & 0.1149 \\
+    \bestrow VBPR (Disaligned) & \best{0.1307} & \best{0.1755} & \best{0.1560} & \best{0.1242} \\
+    \midrule
+    LATTICE\_3 (CLIP) & 0.1232 & 0.1667 & 0.1507 & 0.1160 \\
+    LATTICE\_3 (Disaligned) & 0.1258 & 0.1722 & 0.1535 & 0.1209 \\
+    \midrule
+    FREEDOM (Disaligned) & 0.0986 & 0.1322 & 0.1224 & 0.0954 \\
     \bottomrule
     \end{tabular}
-    \caption{MovieLens 1M - Comparison at cutoff k=10 (Text features)}
+    }
+    \caption{LastFM results. \textbf{VBPR (Disaligned)} outperforms aligned models.}
   \end{table}
 \end{frame}
-
-\begin{frame}{Quantitative comparison: LastFM (k=5)}
-  \begin{table}[h]
-    \centering
-    \begin{tabular}{lcc}
-    	\toprule
-    Model & rec@5 & ndcg@5 \\
-    \midrule
-    VBPR (Text - MiniLM) & \textbf{0.0733} & \textbf{0.1763} \\
-    LATTICE\_1 (Text - MiniLM) & 0.0679 & 0.1657 \\
-    FREEDOM (Text - MiniLM) & 0.0522 & 0.1358 \\
-    \bottomrule
-    \end{tabular}
-    \caption{LastFM - Comparison at cutoff k=5 (Text features)}
-  \end{table}
-\end{frame}
-
-\begin{frame}{Quantitative comparison: LastFM (k=10)}
-  \begin{table}[h]
-    \centering
-    \begin{tabular}{lcc}
-    	\toprule
-    Model & rec@10 & ndcg@10 \\
-    \midrule
-    VBPR (Text - MiniLM) & \textbf{0.1268} & \textbf{0.1695} \\
-    LATTICE\_1 (Text - MiniLM) & 0.1222 & 0.1627 \\
-    FREEDOM (Text - MiniLM) & 0.0988 & 0.1321 \\
-    \bottomrule
-    \end{tabular}
-    \caption{LastFM - Comparison at cutoff k=10 (Text features)}
-  \end{table}
-\end{frame}
-
-
 
 
 % ------------------------- Discussion & Conclusion -------------------------
 \section{Discussion \& Conclusion}
-\begin{frame}{Discussion}
-  \begin{itemize}
-    \item Alignment helps when modalities share strong semantic relationships (e.g., posters and descriptions)
-    \item Aggressive alignment (AudioCLIP) can erase modality-specific signals leading to worse ranking
-    \item Simpler models (VBPR) can outperform complex GNNs when features are well represented
-  \end{itemize}
+
+\begin{frame}{Discussion: Context Matters}
+  \begin{block}{MovieLens 1M (Movies)}
+    \begin{itemize}
+        \item Modalities (Posters, Plot) share high semantic correlation.
+        \item \textbf{Result:} Alignment (CLIP) helps. It reinforces the shared signal.
+    \end{itemize}
+  \end{block}
+  
+  \begin{block}{LastFM (Music)}
+    \begin{itemize}
+        \item Modalities (Audio, Cover Art) are semantically distinct/orthogonal.
+        \item \textbf{Result:} Strict alignment hurts. Disaligned features (keeping specific audio/visual signals separate) perform better.
+    \end{itemize}
+  \end{block}
 \end{frame}
 
 \begin{frame}{Conclusions and Future Work}
   \begin{itemize}
-    \item Use domain-adaptive fusion strategies to select aligned/disaligned features
-    \item Explore softer alignment / regularization strategies for audio
-    \item Investigate model-feature co-design (when to use GNNs vs. projection models)
+    \item \textbf{Aggressive Alignment (AudioCLIP):} Can be detrimental if it collapses the feature space too much, erasing fine-grained details needed for ranking.
+    \item \textbf{Simplicity Wins:} Simple projection models (VBPR) with high-quality features often beat complex GNNs (LATTICE) on these datasets.
+    \item \textbf{Future Directions:}
+    \begin{itemize}
+        \item Develop domain-adaptive fusion strategies (soft-alignment).
+        \item Investigate regularization techniques to prevent feature collapse in tri-modal alignment.
+    \end{itemize}
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Thank you!}
+  \begin{center}
+    \huge Thank you for your attention! \\
+    \vspace{1em}
+    \twemoji{rocket}
+  \end{center}
+\end{frame}
 
 \begin{frame}[allowframebreaks]{References}
   \bibliographystyle{plain}
