@@ -47,7 +47,7 @@
 }
 
 % ------------------------- Introduction -------------------------
-\section{Introduction}
+\section{Introduction to Recommender Systems}
 \begin{frame}{Recommender Systems}
   \begin{itemize}
     \item Guide users to relevant items in a large space \cite{Lops2011}
@@ -128,23 +128,36 @@
     \caption{Tri-modal alignment in AudioCLIP}
   \end{figure}
 \end{frame}
-
-% ------------------------- Experimental Settings -------------------------
 \section{Experimental Settings}
 
+\begin{frame}{Research Questions}
+      \begin{block}{RQ1: Qualitative Analysis (Geometry)}
+        How does the alignment process (e.g., CLIP, AudioCLIP) affect the geometric distribution of the feature space?
+    \end{block}
+
+    \begin{block}{RQ2: Quantitative Analysis (Performance)}
+        Can the integration of \textit{aligned} multimodal embeddings (text, image, audio) enhance recommendation accuracy compared to unimodal or non-aligned approaches?
+    \end{block}
+\end{frame}
+
+
+
+% ------------------------- Experimental Settings -------------------------
+
+
 \begin{frame}{Pipeline}
-    \centering
-    \begin{tikzpicture}[
-      node distance=0.6cm and 0.6cm,
+\centering
+\begin{tikzpicture}[
+      node distance=1cm,
       auto,
       % STILI (Tema Rosso)
       block/.style={
-        rectangle, 
-        draw=red!80!black, 
-        fill=red!10, 
-        text width=6.5em, 
-        text centered, 
-        rounded corners, 
+        rectangle,
+        draw=red!50!black,
+        fill=red!10,
+        text width=6.5em,
+        text centered,
+        rounded corners,
         minimum height=3.5em,
         font=\small
       },
@@ -156,43 +169,18 @@
       }
     ]
 
-      % --- RIGA 1 (Sinistra -> Destra) ---
-      \node [block] (discovery) {File Discovery \& Alignment};
-      \node [block, right=of discovery] (validation) {Validation \& Filtering};
-      \node [block, right=of validation] (extraction) {Embedding Extraction};
+      % Nodi e posizionamento (semplificati: 3 blocchi da sinistra a destra)
+      \node [block] (extraction) {Embedding Extraction and Validation};
+      \node [block, right=of extraction] (analysis) {Data Distribution Analysis};
+      \node [wideblock, right=of analysis] (training) {MMRec Model Training \& Evaluation};
 
-      % --- RIGA 2 (Destra -> Sinistra) ---
-      \node [block, below=of extraction] (consistency) {Strict Consistency};
-      \node [block, left=of consistency] (output) {Aligned .npy Output};
-      
-      % POSIZIONAMENTO MODIFICATO: A sinistra dell'output (Tradotto)
-      \node [block, left=of output] (analysis) {Data Distribution Analysis};
+      % Frecce / flow
+      \path [line] (extraction) -- (analysis);
+      \path [line] (analysis) -- (training);
 
-      % --- RIGA 3 (Sotto) ---
-      % POSIZIONAMENTO MODIFICATO: Sotto l'analisi (Tradotto)
-      \node [wideblock, below=of analysis] (training) {MMRec Model Training \& Evaluation};
-
-      % --- FRECCE ---
-      \path [line] (discovery) -- (validation);
-      \path [line] (validation) -- (extraction);
-      \path [line] (extraction) -- (consistency); % Scende
-      \path [line] (consistency) -- (output);    % Va a sinistra
-      \path [line] (output) -- (analysis);       % Va a sinistra
-      \path [line] (analysis) -- (training);     % Scende
-      
-    \end{tikzpicture}
+\end{tikzpicture}
 \end{frame}
 
-\begin{frame}{Research Questions}
-
-      \begin{block}{RQ1: Qualitative Analysis (Geometry)}
-        How does the alignment process (e.g., CLIP, AudioCLIP) affect the geometric distribution of the feature space?
-    \end{block}
-
-    \begin{block}{RQ2: Quantitative Analysis (Performance)}
-        Can the integration of \textit{aligned} multimodal embeddings (text, image, audio) enhance recommendation accuracy compared to unimodal or non-aligned approaches?
-    \end{block}
-\end{frame}
     
 
 
@@ -272,13 +260,11 @@
             \centering
             \textbf{Disaligned (MiniLM+ViT)}
             \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_minilm_image_vit_kde.png}
-            \small{\textcolor{green!60!black}{Distinct feature spaces preserve complementary info.}}
         \end{column}
         \begin{column}{0.5\textwidth}
             \centering
             \textbf{CLIP Aligned (Text+Image)}
             \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_clip_image_clip_kde.png}
-            \small{\textcolor{blue}{Semantic alignment bridges modalities without collapse.}}
         \end{column}
     \end{columns}
     \vspace{1em}
@@ -295,7 +281,6 @@
        \centering
        \textbf{Disaligned (Rich Signal)}
        \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_text_minilm_image_vit_audio_vggish_kde.png}
-       \small{\textcolor{green!60!black}{Modality-specific distributions cover the manifold.}}
     \end{column}
 
     % Colonna Destra: AudioCLIP
@@ -303,15 +288,12 @@
        \centering
        \textbf{AudioCLIP (Over-Aligned)}
        \includegraphics[width=\textwidth]{../data/reports/experiment_plots/movielens_1m_LATTICE_audioclip_full_kde.png}
-       \small{\textcolor{red}{Aggressive alignment.}}
     \end{column}
   \end{columns}
 
   \vspace{1em}
   \begin{block}{Why does alignment fail here?}
-    \begin{itemize}
-        \item \textbf{Loss of Nuance:} By forcing all three modalities (Text, Image, Audio) into the exact same space too aggressively, the model loses the rich multimodal signal
-    \end{itemize}
+        AudioCLIP's aggressive alignment appears to collapse the audio feature space, making it sharply distinct from other modalities. This collapse, combined with a flattened image distribution with respect to CLIP
   \end{block}
 \end{frame}
 
@@ -374,27 +356,28 @@
 \begin{frame}{Discussion: Context Matters}
   \begin{block}{MovieLens 1M (Movies)}
     \begin{itemize}
-        \item Modalities (Posters, Plot) share high semantic correlation.
+        \item Modalities share high semantic correlation.
         \item \textbf{Result:} Alignment (CLIP) helps. It reinforces the shared signal.
+        \item \item \textbf{AudioCLIP Anomaly:} Loss in performance with respect to CLIP
     \end{itemize}
   \end{block}
   
   \begin{block}{LastFM (Music)}
     \begin{itemize}
-        \item Modalities (Audio, Cover Art) are semantically distinct/orthogonal.
-        \item \textbf{Result:} Strict alignment hurts. Disaligned features (keeping specific audio/visual signals separate) perform better.
+        \item Modalities are semantically distinct/orthogonal.
+        \item \textbf{Result:} Alignment does not help, even more if it is a strict alignment (AudioCLIP).
     \end{itemize}
   \end{block}
 \end{frame}
 
 \begin{frame}{Conclusions and Future Work}
   \begin{itemize}
-    \item \textbf{Aggressive Alignment (AudioCLIP):} Can be detrimental if it collapses the feature space too much, erasing fine-grained details needed for ranking.
-    \item \textbf{Simplicity Wins:} Simple projection models (VBPR) with high-quality features often beat complex GNNs (LATTICE) on these datasets.
+    \item \textbf{Aggressive Alignment (AudioCLIP):} Can hurts performances.
+    \item \textbf{Simplicity Wins:} Simple models (VBPR) with high-quality features often beat complex GNNs (LATTICE) on these datasets.
     \item \textbf{Future Directions:}
     \begin{itemize}
-        \item Develop domain-adaptive fusion strategies (soft-alignment).
-        \item Investigate regularization techniques to prevent feature collapse in tri-modal alignment.
+        \item Investigate regularization techniques to prevent the an aggresive alignment with AudioCLIP-like models.
+        \item Automatic selection system for recommendation algorithms and encoders based on data distribution
     \end{itemize}
   \end{itemize}
 \end{frame}
