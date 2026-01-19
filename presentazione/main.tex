@@ -358,13 +358,13 @@
     \begin{itemize}
         \item Modalities share high semantic correlation.
         \item \textbf{Result:} Alignment (CLIP) helps. It reinforces the shared signal.
-        \item \item \textbf{AudioCLIP Anomaly:} Loss in performance with respect to CLIP
+        \item \textbf{AudioCLIP Anomaly:} Loss in performance with respect to CLIP
     \end{itemize}
   \end{block}
   
   \begin{block}{LastFM (Music)}
     \begin{itemize}
-        \item Modalities are semantically distinct/orthogonal.
+        \item Modalities do not share high semantic correlation.
         \item \textbf{Result:} Alignment does not help, even more if it is a strict alignment (AudioCLIP).
     \end{itemize}
   \end{block}
@@ -372,8 +372,10 @@
 
 \begin{frame}{Conclusions and Future Work}
   \begin{itemize}
+    \item \textbf{Context-Dependent Alignment:} Aligned features (CLIP) help when modalities are semantically correlated (MovieLens), but can hurt when they are not (LastFM).
     \item \textbf{Aggressive Alignment (AudioCLIP):} Can hurts performances.
-    \item \textbf{Simplicity Wins:} Simple models (VBPR) with high-quality features often beat complex GNNs (LATTICE) on these datasets.
+    \item \textbf{Simplicity Wins:} Simple models often beat complex ones.
+    \item \textbf{GNNs models:} They work better with disaligned features, as they can learn to fuse different signals.
     \item \textbf{Future Directions:}
     \begin{itemize}
         \item Investigate regularization techniques to prevent the an aggresive alignment with AudioCLIP-like models.
