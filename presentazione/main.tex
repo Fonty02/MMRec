@@ -165,13 +165,14 @@
       % Stile per il blocco finale che contiene più testo
       wideblock/.style={
         block,
-        text width=10em
+        text width=10em,
+        font=\small
       }
     ]
 
       % Nodi e posizionamento (semplificati: 3 blocchi da sinistra a destra)
-      \node [block] (extraction) {Embedding Extraction and Validation};
-      \node [block, right=of extraction] (analysis) {Data Distribution Analysis};
+      \node [wideblock] (extraction) {Embedding Extraction and Validation};
+      \node [wideblock, right=of extraction] (analysis) {Data Distribution Analysis};
       \node [wideblock, right=of analysis] (training) {MMRec Model Training \& Evaluation};
 
       % Frecce / flow
@@ -386,9 +387,7 @@
 
 \begin{frame}{Thank you!}
   \begin{center}
-    \huge Thank you for your attention! \\
-    \vspace{1em}
-    \twemoji{rocket}
+    \huge{ Thank you for your attention! \twemoji{rocket} }
   \end{center}
 \end{frame}
 
